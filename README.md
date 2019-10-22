@@ -37,7 +37,18 @@
 1. If you are reading this you must have setup Github and the Github classroom
    code. Great! You'll need to set this up in both your local and the Linode
    machine.
-2. You'll find your remote repos as below. Note that the remote repo below uses
+2. You'll make your first edit: enter your banner ID in `Main.java`:
+
+```Java
+class Main {
+
+    // Enter your banner ID here
+    public static String bannerid = "B0123456789";
+
+...
+```
+
+3. You'll find your remote repos as below. Note that the remote repo below uses
    `https`.  If you want to setup SSH, feel free. Also note that yourusername
    will be replaced with your Github user name.
 
@@ -47,7 +58,7 @@ origin  https://github.com/brown-cs127/indexing-youusername.git (fetch)
 origin  https://github.com/brown-cs127/indexing-youusername.git (push)
 ```
 
-3. We want to add a remote repo so that you can get updates to the code that we
+4. We want to add a remote repo so that you can get updates to the code that we
    make:
 
 ```bash
@@ -59,7 +70,7 @@ upstream        https://github.com/brown-cs127/cs127-indexing.git (fetch)
 upstream        https://github.com/brown-cs127/cs127-indexing.git (push)
 ```
 
-4. When you want to push and pull or to pull our changes:
+5. When you want to push and pull or to pull our changes:
 
 ```bash
 $ git pull origin master    # pull from your repo
@@ -67,7 +78,7 @@ $ git push origin master    # push to your repo
 $ git pull upstream master    # pull from changes from our repo
 ```
 
-5. If you are working in the machine we provided, all the software required
+6. If you are working in the machine we provided, all the software required
    (Java and Python) are available. If you are working locally, you'll need to
    install the Java JDK and JRE and Python3. You'll also need to install
    Python's Pandas package.
