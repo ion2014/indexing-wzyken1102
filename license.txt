@@ -1,0 +1,13 @@
+While the code is open, you aren't allowed to copy it. Why? Because you can
+write it in a day and you probably need to stare at a computer more.
+Alternatively, go enjoy the outdoors.
+
+But really, it's not ready. It's only public because I need to share it with
+people without a github account. So look but don't touch.
+
+And if you touch, I don't claim this stuff even works so I am not responsible if
+your data center blows up or the code adds 1 + 1 and gives you 3.
+
+Good luck. See the mountains. Get some vitamin D.
+
+Please.
