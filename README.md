@@ -37,7 +37,8 @@
 1. If you are reading this you must have setup Github and the Github classroom
    code. Great! You'll need to set this up in both your local and the Linode
    machine.
-2. You'll make your first edit: enter your banner ID in `Main.java`:
+2. You'll make your first edit: enter your banner ID in `Main.java` and save
+   Main.java.
 
 ```Java
 class Main {
@@ -56,6 +57,13 @@ class Main {
 $ git remote --v
 origin  https://github.com/brown-cs127/indexing-youusername.git (fetch)
 origin  https://github.com/brown-cs127/indexing-youusername.git (push)
+```
+   Push the banner id change you made to your repo:
+
+```bash
+$ git add .
+$ git commit -m "changing bannder id"
+$ git push origin master
 ```
 
 4. We want to add a remote repo so that you can get updates to the code that we
