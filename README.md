@@ -273,19 +273,10 @@ Linode machine we provided.
 
 The code implements a simple column-oriented `Table` supporting only the Integer
 data type. This `Table` supports a few essential database operations: inserts,
-deletes, filters, and aggregations (currently a sum()). In addition, the table
-supports a new operator you might not have seen called "materialize". These are
-discussed below.
+deletes, filters, and updates. In addition, the table supports a new operator
+you might not have seen called "materialize". These are discussed below.
 
-It is **import to note** that the code distributed to students can be modificed
-in almost any way and is written to show how the initial implementation works.
-However, there are limits (as with everything):
-
-**DO NOT change the function signatures of the `Table` class.**
-
-### Tuples, Columns, and Tables
-
-#### Tuples
+### Tuples
 `Tuple.java` contains the code for a `Tuple`. You'll see that the `Tuple` class
 is simply a hashtable where the key is a String, and the value is an Integer.
 The key is the attribute, and the value is well, the value of that attribute.
@@ -299,14 +290,14 @@ t.put("B", 2);
 some`Table`.insert(t1);
 ```
 
-#### Columns
+### Columns
 `Columns.java` contains the code for the *physical representation* for the
 *logical attribute* in a `Table`. Because the `Table` is a column-oriented data
 storage scheme, the set of values of a given attribute is stored as an array in
-contiguous memory. You'll see that this column is simply an ArrayList of
+contiguous memory. You'll see that this column is simply an `Vector` of
 Integers.
 
-#### Tables
+### Tables
 `Table.java` contains a bulk of the initial code. It has several internal
 variables:
 
@@ -314,12 +305,12 @@ variables:
 for future use.
 * `Hashtable<String, Column> attributes` is the collection of columns and the
 attribute name corresponding to those columns.
-* `ArrayList<Boolean> valid` is an array that indicates whether a tuple is valid
+* `Vector<Boolean> valid` is an array that indicates whether a tuple is valid
 or not (for example, when the tuple is deleted)
 
-Internally, the column-oriented storage allows the `Table` to use the index of a
-tuple in its column as the tuple's id. In the code below, `Tuple` t1 will be
-referenced internally with id 0, t2 with id 1, and t3 with id 2. `Tuple` t2's
+Internally, the column-oriented storage allows the `Table` to use the position
+of a tuple in its column as the tuple's id. In the code below, `Tuple` t1 will
+be referenced internally with id 0, t2 with id 1, and t3 with id 2. `Tuple` t2's
 value for attribute "A" can be accessed in the Column corresponding to attribute
 A equivalent to `columnA[0]`.
 
@@ -335,18 +326,17 @@ Table someTable = new Table("test_table", cols);
 Tuple t1 = new Tuple();
 t1.put("A", 1);
 t1.put("B", 2);
-toTest.insert(t1);
+someTable.insert(t1);
 
 Tuple t2 = new Tuple();
 t2.put("A", 1);
 t2.put("B", 3);
-toTest.insert(t2);
+someTable.insert(t2);
 
 Tuple t3 = new Tuple();
 t3.put("A", 3);
 t3.put("B", 1);
-toTest.insert(t3);
-
+someTable.insert(t3);
 ```
 
 The `Table` class provides several methods we describe below.
@@ -355,7 +345,7 @@ The `Table` class provides several methods we describe below.
 tuple to each of the columns. Internally marks that tuple as valid by also
 pushing `true` into the `valid` variable.
 
-**delete**: Given a `Tuple`'s Integer ID, marks the `Tuple` as invalid by
+**delete**: Given a set of `Tuple`s' IDs, marks the `Tuple`s' as invalid by
 setting the `valid` variable for that id as `false`. *Note:* this extremely
 naive approach is done on purpose. At some point, there are performance
 implications to not garbage collecting or physically deleting these entries.
@@ -363,8 +353,11 @@ implications to not garbage collecting or physically deleting these entries.
 **filter**: Given a `Filter`, returns the `HashSet` of valid tuple IDs that
 qualify. See the description of a `Filter` later in the document.
 
-**materialize**: Given a set of attributes and a set of valid tuple ids
-(`Integer`s), returns a `MaterializedView` of the attributes and tuples
+**update**: Given a a set of `Tuple`s' IDs, an attribute, and value, updates the
+`Tuple`s attribute to the given value.
+
+**materializeResults**: Given a set of attributes and a set of valid tuple ids
+(`Integer`s), returns a `MaterializedResults` of the attributes and tuples
 requested. This is particularly necessary for column stores because a `Tuple`'s
 values are stored separately in columns. This operation is also quite expensive
 and is typically only used as the very last step in the query plan. This
@@ -376,37 +369,71 @@ technique is called *late tuple materialization*. We describe a
 **Tip**: the `load` method currently calls `insert` each time. This *might* be
 an issue when you are building an index...
 
-#### Other stuff relating to Tuples, Columns, and Tables
+### Other stuff relating to Tuples, Columns, and Tables
 
-**Filter**: Provides an interface for Filter classes. It requires two methods
-for the classes that implement it: `target_attribute` and `check`. Look at the
-`RangeFilter` class that implements `Filter` for a range filter that checks if a
-value `x` is `low <= x < high`.
+**Filter**: A recursive data structure. At the bottom of the recursion, a Filter
+contains an `attribute`, a `low`, and a `high` value. If the low and high values
+are present, then it's a range filter `low <= x <= high`. Note that if `low =
+high`, then this is equivalent to an equality filter, it's an equality filter.
+If `high` is null and `low` is present, then this is a query is equivalent to `x
+>= low`. If vice versa, then it's `x <= high`.
 
-**MaterializedResults**: This is a very lightweight wrapper around ArrayList<Tuple>
-mostly because we wanted to override the toString method (for printing).
+**MaterializedResults**: This is a very lightweight wrapper around
+`Vector<Tuple>`. To generate this list you'll need to iterate over the columns
+in the `Table` and put together the tuples as previously descibed.
 
-### Indices
+### Indexes and B+ Tree
 
-We provide an interface for indices in `Index.java` for the required methods for
-indices. We also provide skeleton code for your B+ Tree implementation, along
-with psuedocode later in this document or in the references in the book. The
-`BPlustTree.java` contains skeleton code for the B+ Tree, the Leaf and the
-Internal nodes.
+The B+ tree code in `BPlusTree.java` currently stands alone and is unused
+anywhere else besides the tests. After completing the B+ tree code, you're going
+to need to write code to use the B+ tree as an index for columns in your table.
 
-#### Phase #1: Code base and B+ Tree
+#### Other indexes
+
+At the end of the project, you're going to experiment with one of two things:
+
+1. An significant optimization to your B+ tree. Note that this should
+   fundamentally change how your B+ tree works. Minor optimizations such as
+   changing branching factor doesn't count!
+
+2. An alternative indexing scheme. We'll be discussing this as we progress in
+   class. Some options include LSM Trees, Bitmap Indexes, HashMaps. In all
+   cases, you DON'T need to implement these yourself - you can use anything
+   provided in the Java standard library. You're simply going to need to write
+   code on how to use these data structures as an index.
+
+   For example, if you use a HashMap, Java has a bunch of HashMap
+   implementations. You can choose one and write code to use it as an index for
+   your column or table.
+
+## Phases
+
+Each phase requires you to check in with a TA. We'll release sign-in sheets for
+when these check-ins are going to occur.
+
+### Phase #1: Code base and B+ Tree
+
 There are two tasks to the first phase:
-* First, get familiar with the codebase - specifically, the tbale
 
-Want to know how a B+ tree works in a fun and interactive visualization? Check
-this out:
+1. First, get familiar with the codebase. We are providing two recitations to
+   walk through the codebase.
 
-https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
+2. Second, write the B+ tree code.  Want to know how a B+ tree works in a fun
+   and interactive visualization? Check this out:
 
+   https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
 
+### Phase #2: Bind B+ Tree to your table
 
+You're going to need to bind your BPlusTree code into your Table and modify your
+Table to use the B+ Tree. You're going to have to use this as a primary
+(clustered) index, and as a secondary index.
 
+### Phase #3: Investigate alternative indexing schemes
 
-TODO: More instruction here when the skeleton code is more fully fleshed out.
+We discussed "Other indexes" previously. That falls in this phase. We also want
+you to write a one page summary of what you did and why. You should confirm that
+there is some gain to your alternative indexing scheme by comparing benchmark
+results. If it's actually slower, then also explain why.
 
 
