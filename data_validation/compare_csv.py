@@ -12,7 +12,7 @@ def read_sort(f):
     return df.sort_values(by=cols).reset_index(drop=True)
 
 exp = "expected/{}".format(filename)
-res = "results/{}".format(filename)
+res = "results/{}.csv".format(filename)
 
 df1 = read_sort(exp)
 df2 = read_sort(res)

@@ -10,4 +10,4 @@ B = [random.randrange(1, 1001, 1) for _ in range(1000)]
 C = [random.randrange(1, 1001, 1) for _ in range(1000)]
 
 df = pd.DataFrame({"A": A, "B": B, "C": C})
-df.to_csv("data.csv", index=False, header=False)
+df.to_csv("data", index=False, header=False)
