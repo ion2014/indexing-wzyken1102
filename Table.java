@@ -132,6 +132,7 @@ public class Table {
                 col.set(i, value);
             }
         } else {
+            System.out.println("Updating ids");
             for (Integer id : ids) {
                 col.set(id, value);
             }

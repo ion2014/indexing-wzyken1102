@@ -12,6 +12,9 @@ public class TableTests {
     Random generator;
 
     public TableTests() {
+    }
+
+    void resetTests() throws Exception {
         HashSet<String> a = new HashSet<String>();
         a.add("A");
         a.add("B");
@@ -19,14 +22,14 @@ public class TableTests {
 
         table = new Table("test_table", a);
         reader = new CSVReader("data_validation/data");
-
+        Vector<Tuple> tup = reader.read();
+        table.load(tup);
         this.attributes = a;
         this.generator = new Random();
     }
 
     public void testLoad() throws Exception {
-        Vector<Tuple> tup = reader.read();
-        table.load(tup);
+        resetTests();
     }
 
     TupleCollection filterHelper(Filter filter) {
@@ -43,24 +46,28 @@ public class TableTests {
         return tuples;
     }
     public void testBetween() throws Exception {
+        resetTests();
         Filter filter = new Filter("A", 500, 600);
         TupleCollection tuples = filterHelper(filter);
         tuples.toCSV("data_validation/results/between.csv");
     }
 
     public void testLT() throws Exception {
+        resetTests();
         Filter filter = new Filter("A", null, 600);
         TupleCollection tuples = filterHelper(filter);
         tuples.toCSV("data_validation/results/lt.csv");
     }
 
     public void testGT() throws Exception {
+        resetTests();
         Filter filter = new Filter("A", 500, null);
         TupleCollection tuples = filterHelper(filter);
         tuples.toCSV("data_validation/results/gt.csv");
     }
 
     public void testComposite() throws Exception {
+        resetTests();
         Filter filterA = new Filter("A", 500, 600);
         Filter filterB = new Filter("B", 100, 200);
         Filter composite = new Filter(filterA, filterB, FilterOp.AND);
@@ -68,7 +75,22 @@ public class TableTests {
         tuples.toCSV("data_validation/results/composite.csv");
     }
 
+    public void testUpdate() throws Exception {
+        resetTests();
+        Filter filter = new Filter("A", 500, 600);
+        TupleIDSet intermediate = table.filter(filter);
+        table.update("B", intermediate, 2000);
+
+        MaterializedResults results = table.materialize(attributes, null);
+        TupleCollection tuples = new TupleCollection();
+        for (Tuple t : results) {
+            tuples.addTuple(t);
+        };
+        tuples.toCSV("data_validation/results/update.csv");
+    }
+
     public void testDelete() throws Exception {
+        resetTests();
         Filter filter = new Filter("A", 500, 600);
         TupleIDSet intermediate = table.filter(filter);
 

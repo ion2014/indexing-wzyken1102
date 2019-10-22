@@ -38,6 +38,7 @@ class Main {
         test.testLT();
         test.testComposite();
         test.testDelete();
+        test.testUpdate();
     }
 
     void testTree() throws Exception {

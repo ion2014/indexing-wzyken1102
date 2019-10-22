@@ -14,7 +14,7 @@ bench:
 	@grep "delete" benchmark_results.txt >> /home/franco/benchmarks/delete
 
 data:
-	cd data_validation ; ./generate_data.py ; ./range_filter.py ; ./delete.py
+	cd data_validation ; ./generate_data.py ; ./range_filter.py ; ./delete.py; ./update.py
 
 clean:
 	rm *.class
