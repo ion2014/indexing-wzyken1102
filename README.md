@@ -1,8 +1,80 @@
 # CS127 Indexing Programming Assignment
 
-## Overview of Expectations for this Programming Assignment
+## Setup
 
-### Learning Goals
+### Machine to do your work:
+
+1. We are providing access to a Linode cloud instance (the Linode machine). You
+   can do work there by SSH or SSHFS. You'll need to access the cloud instance
+   to submit your benchmarks and see how you are doing relative to the rest of
+   the class. To access the machine by SSH:
+
+   ```bash
+   $ ssh B1234567890@96.126.110.231
+   ```
+
+   where B1234567890 is your banner ID. Your password is your banner ID as well.
+   Please change your password when you first log in:
+
+   ```bash
+   $ passwd
+   ```
+   which will prompt you in the following way:
+
+   ```bash
+   (current) UNIX password:
+   Enter new UNIX password:
+   Retype new UNIX password:
+   passwd: password updated successfully
+   ```
+
+2. You can also do your work locally, you're going to need Java JDK and JRE.
+   You'll also need Python3 and Pandas if you want to generate data other than
+   the one we included in the repo.
+
+### Git Setup
+
+1. If you are reading this you must have setup Github and the Github classroom
+   code. Great! You'll need to set this up in both your local and the Linode
+   machine.
+2. You'll find your remote repos as below. Note that the remote repo below uses
+   `https`.  If you want to setup SSH, feel free. Also note that yourusername
+   will be replaced with your Github user name.
+
+```bash
+$ git remote --v
+origin  https://github.com/brown-cs127/indexing-youusername.git (fetch)
+origin  https://github.com/brown-cs127/indexing-youusername.git (push)
+```
+
+3. We want to add a remote repo so that you can get updates to the code that we
+   make:
+
+```bash
+$ git remote add upstream https://github.com/brown-cs127/cs127-indexing.git
+$ git remote --v
+origin          https://github.com/brown-cs127/indexing-yourusername.git (fetch)
+origin          https://github.com/brown-cs127/indexing-yourusername.git (push)
+upstream        https://github.com/brown-cs127/cs127-indexing.git (fetch)
+upstream        https://github.com/brown-cs127/cs127-indexing.git (push)
+```
+
+4. When you want to push and pull or to pull our changes:
+
+```bash
+$ git pull origin master    # pull from your repo
+$ git push origin master    # push to your repo
+$ git pull upstream master    # pull from changes from our repo
+```
+
+5. If you are working in the machine we provided, all the software required
+   (Java and Python) are available. If you are working locally, you'll need to
+   install the Java JDK and JRE and Python3. You'll also need to install
+   Python's Pandas package.
+
+**Franco's going to have tech hours throughout the week to help with setup**
+
+## Learning Goals and Tasks
 
 In this programming assignment, students learn how to:
 
@@ -35,31 +107,75 @@ Students will be graded in the following way:
 4. A: Exploration and implementation of one alternative avenue of indexing
 5. Extra Credit for highly performant implementations based on the benchmarks
    described in the next subsection:
-    1. X extra points for the 50th percentile of the class
-    2. Y extra points for the 25th percentile of the class
-    3. Z extra points for the 10th percentile of the class
+    1. 40 extra points for the 50th percentile of the class
+    2. 50 extra points for the 25th percentile of the class
+    3. 60 extra points for the 10th percentile of the class
+6. These extra points will be applied at the end of the semester to your overall
+   grade
 
 ## Code
 
-The goal of the code base is to keep things small and streamlined. This allows
-you the student to go bazinga(s) over modifications and optimizations without
+### Summary of files
+
+Although it seems like there's alot of code, most of it is testing code!  The
+goal of the code base is to keep things small and streamlined. This allows you
+the student to go bazinga(s) over modifications and optimizations without
 fear that you shouldn't modify some file.
 
 The files you can (and likely should modify) are the following:
-* `Main.java`
-* `Column.java`
-* `BPlusTree.java`
-* `Table.java`
+* `Main.java`: contains the main entry point to the code
+* `BPlusTree.java`: contains the B+ tree skeleton class. This compiles but
+doesn't work! You'll need to fill in the functions. We suggest some functions
+for you to make.
+* `Column.java`: contains the Column class. You'll modify this to include your
+indexing mechanism after you've built your B+ tree.
+* `Table.java`: contains the Table class. Defines the interfaces that allow you
+to perform range queries on the table class. You'll have to change the
+implementation of these methods to account for any changes you've made in the
+other files.
 
 You can make any changes to the files above so long as you follow the
 instructions on what you are able to change and not. You can also make new Java
 files that contain your own code.
 
-### Installing and Running
+The following files don't need to be changed but you should know what they are
+used for. It might be helpful to change some of them but it wouldnt be
+necessary.
+* `Tuple.java`: contains the definition of a Tuple. This is the logical Tuple
+outside of the table. The Table takes an instance of a Tuple and stores the
+information in the Tuple, not necessarily using the instance of the Tuple.
+* `TupleIDSet.java`: contains the definition of a set of Tuple IDS (Integers).
+This is what is returned from a filter predicate, for example, the Tuple IDs
+where attribute A is between some value x and y.
+* `Filter.java`: contains the definition for a filter predicate. It's passed
+into the `Table.filter()` method so that the method can execute the code.
+* `MaterializedResults.java`: contains the definition for the
+MaterializedResults class. An instance of this is returned when you want to get
+the tuples from a set of tuple IDs.
+
+The following files deal with tests. Do not edit these files!:
+* `Benchmarks.java`: Contains benchmarking code where we measure the query
+response time of your Table.
+* `BPlusTreeTests.java`: Tests the correctness of your B+ tree. It puts and
+removes values from your B+ tree. It also checks the internal node structure of
+your B+ tree using the `INodeValidator` class defined in this file.
+* `TableTests.java`: Checks that the table's functions are return the right
+values.
+
+### What works and what doesn't?
+
+We've written the table so that it works at a very fundamental level. You can
+confirm this by running `make testtable` as described below. To ensure
+correctness you should modify the code while ensuring the Table's tests stay
+correct.
+
+We've given you skeleton code for the B+ tree and so this definitely doesn't
+work.
+
+## Building and Running
 
 Unfortunately, the code is written in Java. As such, you need the Java JDK. We
 use version 11. I'm no Java programmer so I use a Makefile.
-
 
 To compile the code:
 
@@ -67,7 +183,9 @@ To compile the code:
 make
 ```
 
-To generate the test data:
+We included some initial test data in your repo so you don't need to run this.
+However, if you need to generate the test data, you'll need Python3 and Pandas
+and run:
 
 ```bash
 make data
@@ -76,7 +194,11 @@ make data
 To run the tests the code:
 
 ```bash
-make test
+make testtable
+```
+
+```bash
+make testtree
 ```
 
 To run the benchmarks:
@@ -91,14 +213,50 @@ To clean up class files:
 make clean
 ```
 
-Now wasn't that easy (the make part, not the JDK part)?
+## Tests for Correctness
 
-### Tests for Correctness
+### B+ Tree
 
-## B+ Tree
+You can see the tests for correctness in `BPlusTreeTests.java`. If you run this,
+these tests will fail. You'll need to define your B+ tree first! It does the
+following checks:
 
-You can see the tests for correctness in the `BPlusTreeTests.java` file. This
-file won't work when you initially `make test`
+1. Inserts data into the tree
+2. Most of the data from the tree
+3. Inserts and removes data from the tree for some ratio
+4. Checks internal nodes for children relationships. Note, that this is a very
+   purposely loose check because there are many ways of writing a B+ tree.
+
+If the tree performed correctly, you'll see something similar to the following:
+
+```bash
+$ make testtree
+Seed for random generator: 0
+Successfully inserted: 1000 items
+Successfully got all 1000 expected values
+Successfully deleted: 500 items with 500 items remaining
+Successfully written 806 and deleted 194 and 1000 operations with writeRatio 80
+Successfully validated tree
+```
+
+### Table Tests
+
+You can see the tests for correctness for the Table in the `TableTests.java`. To
+test for correctness, it reads the file `data` we gave you in the
+`data\_validation` directory. It writes results to the
+`data\_validation/results` directory. It then calls a python script to compare
+your results to the data in `data\_validation/expected` directory.
+
+It checks to make sure your implementation is correct for the following table
+methods:
+* `Table.insert`
+* `Table.load`
+* `Table.filter`
+* `Table.update`
+* `Table.delete`
+
+In doing so, it also ensures that method for `Table.materialize` works
+correctly.
 
 ### Benchmarking
 
@@ -107,8 +265,11 @@ built to ensure performant databases. As such, we provide a benchmarking
 framework to estimate how fast your implementations run. You can run these
 benchmarks by running `make bench`
 
+You can find the benchmarks in the file `benchmark_results.txt`. To register
+these benchmarks in the class's benchmarks, you'll need to run this in the
+Linode machine we provided.
 
-### An implementation overview
+## An implementation overview
 
 The code implements a simple column-oriented `Table` supporting only the Integer
 data type. This `Table` supports a few essential database operations: inserts,
