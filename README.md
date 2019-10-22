@@ -1,5 +1,7 @@
 # CS127 Indexing Programming Assignment
 
+[TOC]
+
 ## Setup
 
 ### Machine to do your work:
