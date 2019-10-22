@@ -1,5 +1,4 @@
 import java.util.*;
-import aggregator.Aggregator;
 
 // DO NOT CHANGE THE METHOD SIGNATURE FOR THE METHODS WE GIVE YOU BUT YOU MAY
 // CHANGE THE METHOD'S IMPLEMENTATION
@@ -175,29 +174,6 @@ public class Table {
             }
         }
         return result;
-    }
-
-    // Note, don't worry about the code in here
-    public Integer aggregate(Aggregator agg, TupleIDSet tupleIds) {
-        Column col = attributes.get(agg.target_attribute());
-        int result = 0;
-
-        if (tupleIds != null) {
-            for (int tupleId: tupleIds) {
-                if (valid.get(tupleId)) {
-                    agg.operation(col.get(tupleId));
-                } else {
-                    throw new RuntimeException("tupleID is not valid");
-                }
-            }
-        } else {
-            for (Integer i = 0; i < col.size(); i++) {
-                if (valid.get(i)) {
-                    agg.operation(col.get(i));
-                }
-            }
-        }
-        return agg.result();
     }
 
     @Override

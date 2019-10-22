@@ -3,6 +3,7 @@ all:
 
 testtable:
 	@java -ea Main -testtable
+	cd data_validation; ./compare_csv.py;
 
 testtree:
 	@java -ea Main -testtree
