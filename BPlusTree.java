@@ -4,7 +4,7 @@ import java.util.*;
 // function signatures of these methods. Our checker relies on these methods and
 // assume these function signatures.
 
-public class BPlusTreeSkeleton {
+public class BPlusTree {
 
     // A tree has a root node, and an order
     public Node root;
@@ -13,10 +13,11 @@ public class BPlusTreeSkeleton {
     // these methods.
 
     // Instantiate a BPlusTree with a specific order
-    public BPlusTreeSkeleton(Integer order) { }
+    public BPlusTree(Integer order) { }
 
-    // Given a key, returns the value associated with that key
-    public Integer get(Integer key) { }
+    // Given a key, returns the value associated with that key or null if doesnt
+    // exist
+    public Integer get(Integer key) { return null; }
 
     // Insert a key-value pair into the tree. This tree does not need to support
     // duplicate keys
@@ -72,11 +73,8 @@ abstract class Node {
     // DO NOT edit this method.
     abstract NodeType nodeType();
 
-    // DO NOT edit this method.
-    abstract integer numChildren();
-
     // You may edit everything that occurs in this class below this line.
-    ***************************************************************************
+    // *********************************************************************
 
     // Both leaves and nodes need to keep track of a few things:
     //      their parent
@@ -135,10 +133,10 @@ class LNode extends Node {
     public Integer[] values;
 
     // DO NOT edit this method;
-    public NodeType nodeType() { return NodeType.LEAF };
+    public NodeType nodeType() { return NodeType.LEAF; };
 
     // You may edit everything that occurs in this class below this line.
-    ***************************************************************************
+    // *************************************************************************
 
     // A leaf has siblings on the left and on the right.
 
@@ -170,10 +168,10 @@ class INode extends Node {
     public Node[] children; 
 
     // DO NOT edit this method;
-    public NodeType nodeType() { return NodeType.INTERNAL };
+    public NodeType nodeType() { return NodeType.INTERNAL; };
 
     // You may edit everything that occurs in this class below this line.
-    ***************************************************************************
+    // *************************************************************************
 
     // A leaf node is instantiated with an order
     public INode(Integer order) {
