@@ -7,6 +7,7 @@ class Main {
 
     // Write your test code in this method!
     void yourCode() throws Exception {
+        System.out.println("Hello world?");
     }
 
     // DONT CHANGE BELOW THIS LINE

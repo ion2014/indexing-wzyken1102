@@ -13,9 +13,11 @@ public class Benchmarks {
     String banner;
     LocalDateTime currentTime;
     static PrintWriter writer;
+    static PrintWriter queries;
     static {
         try {
-            writer = new PrintWriter("benchmark_results.txt", "UTF-8");
+            writer = new PrintWriter("benchmarks/results/benchmark_results.sql", "UTF-8");
+            //queries = new PrintWriter("benchmark_queries.sql", "UTF-8");
         } catch(Exception e){
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -41,7 +43,19 @@ public class Benchmarks {
     }
 
     void printDuration(String label, Float nanos) {
-        writer.println(nanos + " " + banner + " " + currentTime + " Benchmark: " + label);
+        System.out.println(
+                label + " performance: "
+                + nanos
+                + "ns per iteration, "
+                + iterations
+                + " iterations");
+
+        writer.println(
+                "INSERT INTO BENCHMARKS VALUES ('"
+                + banner + "','"
+                + currentTime + "',"
+                + nanos + "," + "'"
+                + label + "');");
     }
 
     Table setupTable() {
@@ -81,7 +95,7 @@ public class Benchmarks {
         }
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        printDuration("insert benchmark", s/iter);
+        printDuration("insert", s/iter);
     }
 
     public void bulkLoadBenchmark() {
@@ -95,7 +109,7 @@ public class Benchmarks {
         }
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        printDuration("bulkload benchmark", s/iter);
+        printDuration("bulkload", s/iter);
     }
 
     public void deleteBenchmark() {
@@ -113,7 +127,7 @@ public class Benchmarks {
         }
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        printDuration("delete benchmark", s/iter);
+        printDuration("delete", s/iter);
     }
 
     public void updateBenchmark() {
