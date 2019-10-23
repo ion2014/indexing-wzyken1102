@@ -1,5 +1,11 @@
 # CS127 Indexing Programming Assignment
 
+Disclaimer: We reserve the right to update this homework (within reason) while
+this homework is active. We won't be making massive changes and will probably be
+bug fixes or added features. If we do so, we will send a Piazza post about it
+and you will be responsible for pulling these changes. To learn how to do it,
+please read the Git Setup section below.
+
 ## Setup
 
 ### Machine to do your work:
