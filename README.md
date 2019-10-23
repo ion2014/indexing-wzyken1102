@@ -93,6 +93,52 @@ $ git pull upstream master    # pull from changes from our repo
 
 **Franco's going to have tech hours throughout the week to help with setup**
 
+## Phases
+
+We envision this project works out in 3 large phases. Each phase requires you to
+check in with a TA. We'll release sign-in sheets for when these check-ins are
+going to occur.
+
+### Phase #1: Code base and B+ Tree
+
+There are two tasks to the first phase:
+
+1. First, get familiar with the codebase. We are providing two recitations to
+   walk through the codebase.
+
+2. Second, write the B+ tree code.  Want to know how a B+ tree works in a fun
+   and interactive visualization? Check this out:
+
+   https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
+
+### Phase #2: Bind B+ Tree to your table
+
+You're going to need to bind your BPlusTree code into your Table and modify your
+Table to use the B+ Tree. You're going to have to use this as a primary
+(clustered) index, and as a secondary index.
+
+### Phase #3: Investigate alternative indexing schemes
+
+In this phase, you should explore alternatives to the B+ tree you build. Later
+in this document, we'll discuss what counts and doesnt. Test your changes agains
+the correctness tests and the benchmark. Feel free to add any necessary files to
+your alternative schemes into the repository.
+
+When you are satisified (or about to run out of time), write a summary of what
+you did and why in `writeup.md`. You should confirm that there is some gain to
+your alternative indexing scheme by comparing benchmark results. If it's
+actually slower, then also explain why.
+
+## Submitting
+
+Among the pushed commits in the repo, Github Classroom will take the last commit
+within the deadline.
+
+For phase 3's writeup, write it in `writeup/writeup.md`. To make it easier to
+read, use the markdown syntax. If you are reading this file in a text editor,
+you are currently reading this document in markdown syntax. Include this file
+in your commits.
+
 ## Learning Goals and Tasks
 
 In this programming assignment, students learn how to:
@@ -112,7 +158,7 @@ a recommended timeline:
    day)
 3. Explore and implement one alternative avenue of indexing a database (3 days)
 4. Write a one-page summary of optimizations performed on the B+ tree (if any)
-   and results of item 4 above (<1 day)
+   and results of item 3 above (<1 day)
 
 The remainder of the time should be used to get your extra credit!
 
@@ -130,7 +176,10 @@ Students will be graded in the following way:
     2. 50 extra points for the 25th percentile of the class
     3. 60 extra points for the 10th percentile of the class
 6. These extra points will be applied at the end of the semester to your overall
-   grade
+   grade.
+
+**An important note**: If you submit code that doesnt pass the same tests that
+passed when you first got the code, we'll give you an **automatic C**.
 
 ## Code
 
@@ -394,8 +443,8 @@ an issue when you are building an index...
 contains an `attribute`, a `low`, and a `high` value. If the low and high values
 are present, then it's a range filter `low <= x <= high`. Note that if `low =
 high`, then this is equivalent to an equality filter, it's an equality filter.
-If `high` is null and `low` is present, then this is a query is equivalent to `x
->= low`. If vice versa, then it's `x <= high`.
+If `high` is null and `low` is present, then this is a query is equivalent to
+`x >= low`. If vice versa, then it's `x <= high`.
 
 **MaterializedResults**: This is a very lightweight wrapper around
 `Vector<Tuple>`. To generate this list you'll need to iterate over the columns
@@ -424,35 +473,5 @@ At the end of the project, you're going to experiment with one of two things:
    For example, if you use a HashMap, Java has a bunch of HashMap
    implementations. You can choose one and write code to use it as an index for
    your column or table.
-
-## Phases
-
-Each phase requires you to check in with a TA. We'll release sign-in sheets for
-when these check-ins are going to occur.
-
-### Phase #1: Code base and B+ Tree
-
-There are two tasks to the first phase:
-
-1. First, get familiar with the codebase. We are providing two recitations to
-   walk through the codebase.
-
-2. Second, write the B+ tree code.  Want to know how a B+ tree works in a fun
-   and interactive visualization? Check this out:
-
-   https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
-
-### Phase #2: Bind B+ Tree to your table
-
-You're going to need to bind your BPlusTree code into your Table and modify your
-Table to use the B+ Tree. You're going to have to use this as a primary
-(clustered) index, and as a secondary index.
-
-### Phase #3: Investigate alternative indexing schemes
-
-We discussed "Other indexes" previously. That falls in this phase. We also want
-you to write a one page summary of what you did and why. You should confirm that
-there is some gain to your alternative indexing scheme by comparing benchmark
-results. If it's actually slower, then also explain why.
 
 
