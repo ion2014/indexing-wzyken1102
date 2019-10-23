@@ -28,9 +28,10 @@
    passwd: password updated successfully
    ```
 
-2. You can also do your work locally, you're going to need Java JDK and JRE.
-   You'll also need Python3 and Pandas if you want to generate data other than
-   the one we included in the repo.
+2. You can also do your work locally, you're going to need the Java JDK and JRE.
+   We're using Java 11 but I don't think you need this exact version. You'll
+   also need Python3 and Pandas if you want to generate data other than the one
+   we included in the repo.
 
 ### Git Setup
 
