@@ -270,11 +270,35 @@ make testtable
 make testtree
 ```
 
+Expected testtable output can be found in `data_validation/expected`
+
 To run the benchmarks:
 
 ```bash
 make bench
 ```
+
+To run register the benchmarks in our benchmark DB:
+
+```bash
+make register
+```
+
+You can query the Benchmark db using the file `benchmarks/query.sql`. You can
+modify this file - the code in it is some starter or sample code:
+
+```bash
+make query
+```
+
+To do this benchmark, register, query all at once:
+
+```bash
+make bench register query
+```
+
+Registering to and querying from the benchmarks database requires you to be in
+our Linode machine!
 
 To clean up class files:
 
