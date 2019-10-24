@@ -178,7 +178,6 @@ public class Benchmarks {
         } else if (col == "C") {
             label = "unindexed update";
         }
-        System.out.println(s + " " + iter);
         printDuration(label, s/iter);
     }
 
