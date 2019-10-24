@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
+import java.lang.Math;
 
 public class Benchmarks {
     Random generator;
@@ -63,6 +64,9 @@ public class Benchmarks {
         a.add("A");
         a.add("B");
         a.add("C");
+        Table t = new Table("test_table", a);
+        t.setClusteredIndex("A");
+        t.setSecondaryIndex("B");
         return new Table("test_table", a);
     }
 
@@ -130,27 +134,53 @@ public class Benchmarks {
         printDuration("delete", s/iter);
     }
 
-    //public void bulkUpdateBenchmarkPrimary() {
+    public void updateWarmup(String col) {
+        Table x = setupTable();
+        Vector<Tuple> v = setupTuples();
+        x.load(v);
+        for (Integer i = 0; i < iterations; ++i) {
 
-    //    TupleIDSet tuples = randomIds(iterations);
+            // update a random half of the tuples
+            TupleIDSet tuples = randomIds(dataSize/2);
+            Integer value = generator.nextInt();
 
-    //    Long sum = Long.valueOf(0);
-    //    Table x = setupTable();
-    //    Vector<Tuple> v = setupTuples();
-    //    x.load(v);
-    //    String[] column = ["A", "B", "C"];
-    //    Long sum = Long.valueOf(0);
+            x.update(col, tuples, value);
+        }
+    }
 
-    //    for (Integer tupleid : tuples) {
-    //        String col = column[generator.nextInt() % 3];
-    //        startTimer();
-    //        x.update(col, , Integer value);
-    //        sum += endTimer();
-    //    }
-    //    Float s = Float.valueOf(sum);
-    //    Float iter = Float.valueOf(iterations);
-    //    printDuration("bulkload", s/iter);
-    //}
+    public void updateBenchmark(String col) {
+        // control which column is updated using arguments
+
+        updateWarmup(col);
+        Long sum = Long.valueOf(0);
+
+        Table x = setupTable();
+        Vector<Tuple> v = setupTuples();
+        x.load(v);
+        for (Integer i = 0; i < iterations; ++i) {
+
+            // update a random half of the tuples
+            TupleIDSet tuples = randomIds(dataSize/2);
+            Integer value = generator.nextInt();
+
+            startTimer();
+            x.update(col, tuples, value);
+            sum += endTimer();
+
+        }
+
+        Float s = Float.valueOf(sum);
+        Float iter = Float.valueOf(iterations);
+
+        String label = "clustered update";
+        if (col == "B") {
+            label = "secondary update";
+        } else if (col == "C") {
+            label = "unindexed update";
+        }
+        System.out.println(s + " " + iter);
+        printDuration(label, s/iter);
+    }
 
     TupleIDSet allIds() {
         TupleIDSet tuples = new TupleIDSet();
@@ -163,7 +193,7 @@ public class Benchmarks {
     TupleIDSet randomIds(Integer n) {
         TupleIDSet tuples = new TupleIDSet();
         while (tuples.size() < n) {
-            tuples.add(generator.nextInt() % dataSize);
+            tuples.add(Math.abs(generator.nextInt()) % dataSize);
         }
         return tuples;
     }

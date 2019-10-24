@@ -21,6 +21,8 @@ public class TableTests {
         a.add("C");
 
         table = new Table("test_table", a);
+        table.setClusteredIndex("A");
+        table.setSecondaryIndex("B");
         reader = new CSVReader("data_validation/data");
         Vector<Tuple> tup = reader.read();
         table.load(tup);

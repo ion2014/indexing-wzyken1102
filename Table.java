@@ -19,6 +19,9 @@ public class Table {
         }
     }
 
+    public void setClusteredIndex(String attribute) { }
+    public void setSecondaryIndex(String attribute) { }
+
     // Insert a tuple into the Table
     public void insert(Tuple tuple) {
 
@@ -132,7 +135,6 @@ public class Table {
                 col.set(i, value);
             }
         } else {
-            System.out.println("Updating ids");
             for (Integer id : ids) {
                 col.set(id, value);
             }
