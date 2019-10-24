@@ -8,6 +8,8 @@ please read the Git Setup section below.
 
 ## Setup
 
+Access the Github Classroom code at: https://classroom.github.com/a/mvG8z4w2
+
 ### Machine to do your work:
 
 1. We are providing access to a Linode cloud instance (the Linode machine). You
@@ -505,4 +507,10 @@ At the end of the project, you're going to experiment with one of two things:
    implementations. You can choose one and write code to use it as an index for
    your column or table.
 
+## Hardware Details:
+
+```bash
+$ lscpu # gives CPU information (alternatively: $cat /proc/cpuinfo)
+$ free -m # gives RAM information (alternatively: $cat /proc/meminfo)
+```
 
