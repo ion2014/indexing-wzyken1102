@@ -120,6 +120,18 @@ There are two tasks to the first phase:
 
    https://www.cs.usfca.edu/~galles/visualization/BPlusTree.html
 
+#### Some important notes about the B+ tree we expect:
+
+1. Your B+ tree doesn't need to handle duplicate keys. Doing so makes the B+
+   tree **much much** harder to implement in some cases. There are easy
+   solutions to this but you don't have to worry about them.
+
+2. When building your B+ trees, your tree should be able to handle deletes **but
+   we don't require you to maintain some load factor on the tree*. In other
+   words, you don't need to deal with merging nodes on delete. Besides making
+   implementation much easier,  there's a
+   specific performance reason for this.
+
 ### Phase #2: Bind B+ Tree to your table
 
 You're going to need to bind your BPlusTree code into your Table and modify your
