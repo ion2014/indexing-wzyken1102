@@ -6,4 +6,4 @@
 
 # other files
 *.csv
-benchmark_results.txt
+benchmarks/results/*.sql

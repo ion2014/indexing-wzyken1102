@@ -114,7 +114,7 @@ public class Benchmarks {
 
     public void deleteBenchmark() {
 
-        TupleIDSet tuples = randomIds();
+        TupleIDSet tuples = allIds();
 
         Long sum = Long.valueOf(0);
         for (Integer i = 0; i < iterations; ++i) {
@@ -130,13 +130,40 @@ public class Benchmarks {
         printDuration("delete", s/iter);
     }
 
-    public void updateBenchmark() {
-    }
+    //public void bulkUpdateBenchmarkPrimary() {
 
-    TupleIDSet randomIds() {
+    //    TupleIDSet tuples = randomIds(iterations);
+
+    //    Long sum = Long.valueOf(0);
+    //    Table x = setupTable();
+    //    Vector<Tuple> v = setupTuples();
+    //    x.load(v);
+    //    String[] column = ["A", "B", "C"];
+    //    Long sum = Long.valueOf(0);
+
+    //    for (Integer tupleid : tuples) {
+    //        String col = column[generator.nextInt() % 3];
+    //        startTimer();
+    //        x.update(col, , Integer value);
+    //        sum += endTimer();
+    //    }
+    //    Float s = Float.valueOf(sum);
+    //    Float iter = Float.valueOf(iterations);
+    //    printDuration("bulkload", s/iter);
+    //}
+
+    TupleIDSet allIds() {
         TupleIDSet tuples = new TupleIDSet();
         for (Integer i = 0; i < dataSize; i++) {
             tuples.add(i);
+        }
+        return tuples;
+    }
+
+    TupleIDSet randomIds(Integer n) {
+        TupleIDSet tuples = new TupleIDSet();
+        while (tuples.size() < n) {
+            tuples.add(generator.nextInt() % dataSize);
         }
         return tuples;
     }
