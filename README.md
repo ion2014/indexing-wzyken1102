@@ -127,7 +127,7 @@ There are two tasks to the first phase:
    solutions to this but you don't have to worry about them.
 
 2. When building your B+ trees, your tree should be able to handle deletes **but
-   we don't require you to maintain some load factor on the tree*. In other
+   we don't require you to maintain some load factor on the tree**. In other
    words, you don't need to deal with merging nodes on delete. Besides making
    implementation much easier,  there's a
    specific performance reason for this.
