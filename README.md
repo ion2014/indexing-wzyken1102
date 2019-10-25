@@ -124,7 +124,8 @@ There are two tasks to the first phase:
 
 1. Your B+ tree doesn't need to handle duplicate keys. Doing so makes the B+
    tree **much much** harder to implement in some cases. There are easy
-   solutions to this but you don't have to worry about them.
+   solutions to this but you don't have to worry about them for now. We'll deal
+   with it in the second phase.
 
 2. When building your B+ trees, your tree should be able to handle deletes **but
    we don't require you to maintain some load factor on the tree**. In other
