@@ -1,7 +1,6 @@
 JFLAGS =
 JC = javac
 HOST=$(shell hostname)
-UPSTREAM_STATUS=$(shell git diff upstream/master | wc -l )
 
 .SUFFIXES: .java .class
 
