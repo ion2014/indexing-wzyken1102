@@ -26,6 +26,8 @@ bench: default
 run: default
 	@java -ea Main -c
 
+check_remote:
+
 register:
 ifeq ($(HOST), dontbuildbplustrees.please)
 	@sqlite3 /home/franco/benchmarks.db < benchmarks/results/benchmark_results.sql
