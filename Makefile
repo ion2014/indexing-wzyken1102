@@ -1,6 +1,7 @@
 JFLAGS =
 JC = javac
 HOST=$(shell hostname)
+UPSTREAM_STATUS=$(shell git diff upstream/master | wc -l )
 
 .SUFFIXES: .java .class
 
@@ -25,8 +26,6 @@ bench: default
 
 run: default
 	@java -ea Main -c
-
-check_remote:
 
 register:
 ifeq ($(HOST), dontbuildbplustrees.please)
