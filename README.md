@@ -527,3 +527,377 @@ $ lscpu # gives CPU information (alternatively: $cat /proc/cpuinfo)
 $ free -m # gives RAM information (alternatively: $cat /proc/meminfo)
 ```
 
+## B+ Tree Help!
+
+B+ trees have two kinds of nodes: `Internal` and `Leaf`. Both nodes need an
+array of keys, the number of children it has, optionally, a reference to its
+parent. Bot nodes also need to search, split, insert, delete, and get. They
+implement these differently.
+
+### LNode
+
+#### Structure
+
+```
+Leaf Node:
+
+    degree          // degree of ths node
+    keys            // array of keys in the leaf
+    values          // array of values in the leaf
+    num_children    // number of children
+    right_sibling   // instead of keeping the last value as a pointer
+```
+
+An interesting thing to note is that we can keep track of the right or left
+sibling separately from the values. This means the the contents of the values
+array is always the same number as the keys array. Here's a way of visualizing
+it for degree=4:
+
+```
+"canonical" way:
+
+ keys
+ +-----+
+ |a|b|c|
+ +-------+
+ |1|2|3| +---> next leaf
+ +-------+
+ values
+
+how we'll implement it
+
+ keys
+ +-----+
+ |a|b|c|
+ +-----+  +-+
+ |1|2|3|  | +--->next leaf
+ +-----+  +-+
+ values
+
+```
+This change makes leaf logic much easier to deal with and verify.
+
+#### Initialization
+
+Alot of implementations split **before** insert (when full). We split **after**
+we insert when full. This ensures there is always room for speedy inserts but
+this doesn't really matter in the end. So we need to initialize the leaf so that
+we can insert past "full" **then** split:
+
+```
+Initialize Leaf:
+    degree          <= some number
+    keys            <= empty array with space for degree entries
+    values          <= empty array with space for degree entries
+    num_children    <= 0
+    right_sibling   <= null
+```
+
+Note that instead of degree-1 keys and values, we allow degree keys and values.
+when the number of entries exceeds degree, we split.
+
+#### Search and Mid
+
+We assume that the search returns the first index in keys where the key is >=
+the search key:
+
+```
+search(k):
+    return first index in keys >= k or num_children if k > all keys
+```
+
+For splitting nodes, we need to find the middle of the node. This is simply:
+
+```
+mid:
+    return degree/2 (integer division)
+```
+
+#### Insert
+
+Inserting returns a `Split` if this insert resulted in the node splitting.
+
+```
+insert(k, v) -> Split:
+
+    index <= search for key in keys by binary search,
+
+    if index = num_children, k > all keys in node:
+        put k in keys[index], v in values[index], increment num_children
+
+    else if we found k in keys[index], then set values[index] = v
+
+    otherwise we need to insert k, v in the middle of the node:
+        shift keys and values array 1 position down starting from the the index
+        position.
+
+        put k in keys[index], v in values[index], increment num_children
+
+    // now check if we need to split
+    if num_children = degree, this node splits and returns a SplitResult
+    otherwise returns null
+
+```
+
+#### Split
+
+We use a `SplitResult` to encapsulate the result of the splits. This makes it
+easy to "promote" a key. We also always split rightward.
+
+here's a visualization of the split:
+```
+                                    key
+keys                       left     +-+  right
++-----+                    +-----+  |b|  +-----+
+|a|b|c|                    |a|0|0|  +-+  |b|c|0|
++-----+  +-+               +-----+ +-+   +-----+
+|1|2|3|  | +--->next leaf  |1|0|0| | +-->+2|3|0|
++-----+  +-+               +-----+ +-+   +-----+
+values
+
+```
+
+Note that we promote the smallest value of the right node! Also note that this
+is the only time the keys are duplicated - between leaf and one internal node.
+
+```
+SplitResult:
+    left node       // the left node resulting from the split
+    right node      // the right node resulting from the split
+    key             // the key that determines the split (promoted value)
+
+
+LeafSplit -> SplitResult:
+
+    right <= make a new leaf node with same degree
+
+    copy keys array to the beginning of the right node starting from mid().
+    copy values array to the beginning of the right node starting from mid().
+
+    right's num_children <= the number of items you moved to the right node
+    num_children <= the number of items remaining in this node
+
+    connect this node and the right node's reference
+
+    returns
+    Split:
+        left node <= this node
+        right node <= right
+        key <= mid()
+
+```
+
+#### Delete
+
+We mentioned that you don't need to implement the merging rules when deleting
+from the tree. Here's some psuedocode on how to do just that!
+
+```
+delete(k):
+    index <= search(k)
+
+    if keys[index] != k or index == num_children:
+        then k is not in the node, nothing else to do, return
+
+    shift keys array from keys[index + 1] backward to keys[index]
+    shift values array from keys[index + 1] backward to keys[index]
+    decrement num_children
+
+```
+
+### Sidebar: The first root
+
+The Tree starts with a root node that is an empty leaf. So the insert into the
+tree first inserts into a root that is a leaf, then the root needs to change to
+an internal node when there is a split.
+
+```
+tree insert(k, v):
+    root_split <= root.insert(k, v)
+    if root_split is not null:
+        new root is a new internal node with degree and whos children are the
+        left and right node are defined in a Split structure.
+```
+
+### Internal Nodes
+
+#### Structure
+
+```
+Internal Node:
+    degree          // degree of ths node
+    keys            // array of keys in the intenral node
+    children        // array of reference to children
+    num_children    // number of children
+```
+
+Here, the structure is as expected for order = 4
+
+```
+ keys
+  +-----+
+  |k|k|k|
+ +-------+
+ |c|c|c|c+ note: each item here is a reference to a child node
+ +-------+
+ values
+```
+
+An important thing to note is that the values at children[i] are < keys[i], and
+the values at children[i+1] >= keys[i].
+
+#### Initialization
+
+The internal node is largely similar to the leaf node but instead of a values
+array, we have a children array. An internal node always only begins to exist
+when a split occurs so the only way to initialize an internal node is by using
+a SplitResult.
+
+A naive implementation might give the keys array degree-1 entries, and the
+children array degree entries. However, Similar to the Leaf, we split **after**
+inserting past full so we need room for this to happen. So we actually give keys
+array degree entries, and children array degree + 1 entries.
+
+```
+Initialize Internal Node(degree, split):
+
+    children <= empty array of references to children of size degree + 1
+    keys <= empty array of keys of size degree
+
+    this node only exists because of split so:
+    children[0] = split.left
+    children[1] = split.right
+    keys[0] = split.key
+
+    num_children = 2
+
+```
+
+#### Search and mid
+
+The mid function is the same as the leaf node. The search in an internal node
+is a little bit different to help us with fact that the number of keys is now
+one less than the number of children
+
+```
+search(k):
+    return index of first key >= k. If you reach index = num_children - 1,
+    you've seen all the valid keys so return num_children - 1.
+```
+
+#### Inserts
+
+When we insert into an internal node, we simply continue inserting into the
+children of the internal node. If the children split, the internal node might
+also need to split, so it returns a SplitResult as well.
+
+```
+insert(k, v):
+    index = search(k)
+    split <= null
+
+    here, we find that we are at the last key or we found the appropriate
+    key that's > k. To see why, look again at the Structure section
+    if index = num_children-1 or k < keys[index] insert into child at
+        children[index]
+
+    else if k = keys[index], insert into children[index + 1]
+
+    if either of the above does not return a split, return null,
+    otherwise, we need to insert the split children into this node.
+
+```
+
+#### Inserting Split Children
+
+When the children of an internal node splits, you need to insert the new child
+into this internal node. If this insertion results in this node splitting, then
+the splitting recurses upward by returning another SplitResult
+
+```
+insert\_split(split to\_insert):
+    index <= search(to_insert.key)
+
+    if index = num_children-1 then we can put it at the end of the keys and
+        children arrays. Remember there are 1 fewer keys than children!:
+        keys[index] = to_insert.key
+        children[index+1] = to_insert.right
+
+    otherwise it's somewhere in the middle so:
+        shift keys down from index
+        shift children down from index+1
+        set key[index] and children[index+1] to to_insert.key and
+        to_insert.right
+
+    increment num_children
+
+    if we now exceed degree (num_children > degree), then this node should
+        split, then return the SplitResult
+
+    otherwise return null
+```
+
+#### Split
+
+The splitting of this node follows roughly what the leaf node does but we have
+to consider what happens when the degree is odd or even. We don't
+consider this here but this should get you started. Finally, the promotion works
+in the same way. Here's a visualization of the split:
+
+```
+ keys                  left       key    right
+ +-----+               +-----+    +-+    +-----+
+ |a|b|c|    split      |a| | |    |b|    |c| | |
+ +-------+  ------>   +-------+   +-+   +-------+
+ |1|2|3|4|            |1|2| | |         |3|4| | |
+ +-------+            +-----+-+         +-----+-+
+ values
+```
+
+```
+split:
+    right <= new internal node of the same degree
+
+    remember that there are n children, and n-1 keys. if you are splitting, this
+    means n = degree + 1
+    copy keys from this node to the right node starting from mid()
+    copy children from this node to the right node starting from mid()
+
+    right.num_children <= to be the number of children moved
+    num_children <= mid()
+
+    the key that determined the split is at mid - 1 so:
+    return SplitResult(keys[mid-1], this node, and right node)
+
+```
+
+#### Deletes
+
+Again, we don't require you to merge nodes on delete so all you need to do is to
+to traverse the tree and mark that as deleted
+
+```
+delete(k):
+    index = search(k)
+
+    here, we find that we are at the last key or we found the appropriate
+    key that's > k. To see why, look again at the Structure section
+    if index = num_children-1 or k < keys[index] then delete k in
+        children[index]
+
+    else if k = keys[index], delete k in children[index + 1]
+
+```
+
+### Sidebar: Internal Nodes can have children that are leaves or internal nodes
+
+For this reason, we define the `Node` abstract class in the BPlusTree.java file.
+It allows the Internal Node and the tree's root node to be either an Internal
+Node or a Leaf Node.
+
+Most of the functions you need or may want to define are in this class. Read the
+comments of the class to help you figure this out.
+
+
+
+
