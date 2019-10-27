@@ -180,7 +180,7 @@ class INode extends Node {
         // superclass, identifying itself as a leaf.
         super(order, NodeType.INTERNAL);
 
-        // An INode needs to instantiate the order array.
+        // An INode needs to instantiate the children array
     }
 }
 
