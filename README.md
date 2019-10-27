@@ -649,9 +649,9 @@ here's a visualization of the split:
                                     key
 keys                       left     +-+  right
 +-----+                    +-----+  |b|  +-----+
-|a|b|c|                    |a|0|0|  +-+  |b|c|0|
+|a|b|c|                    |a| | |  +-+  |b|c| |
 +-----+  +-+               +-----+ +-+   +-----+
-|1|2|3|  | +--->next leaf  |1|0|0| | +-->+2|3|0|
+|1|2|3|  | +--->next leaf  |1| | | | +-->+2|3| |
 +-----+  +-+               +-----+ +-+   +-----+
 values
 
@@ -716,7 +716,7 @@ tree insert(k, v):
     root_split <= root.insert(k, v)
     if root_split is not null:
         new root is a new internal node with degree and whos children are the
-        left and right node are defined in a Split structure.
+        left and right nodes defined in a Split structure.
 ```
 
 ### Internal Nodes
@@ -846,8 +846,8 @@ in the same way. Here's a visualization of the split:
 
 ```
  keys                  left       key    right
- +-----+               +-----+    +-+    +-----+
- |a|b|c|    split      |a| | |    |b|    |c| | |
+  +-----+              +-----+    +-+    +-----+
+  |a|b|c|    split     |a| | |    |b|    |c| | |
  +-------+  ------>   +-------+   +-+   +-------+
  |1|2|3|4|            |1|2| | |         |3|4| | |
  +-------+            +-----+-+         +-----+-+
