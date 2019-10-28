@@ -785,6 +785,36 @@ search(k):
     you've seen all the valid keys so return num_children - 1.
 ```
 
+It's important to remember that this search function returns only to the index
+to the keys array. So keep the following things in mind:
+
+* The search function we have never refers to a position in the children array.
+It always refers to a position in the keys array
+* The index returned by our search returns the index in the keys array that is
+the first index >= value being searched for, or num_children - 1.
+* So why num_children - 1? If there are 3 children, there must be 2 keys. The
+two keys in the array have indices 0 and 1, so we return 2 - the index after the
+last valid key.
+
+Here's a maybe helpful graphic:
+
+```
+                +---+
+                |3|7|
+ +------+       +---+       +-----+
+ |      +-------+ | +-------+7|9  |
+ +------+     +---+---+     +-----+
+              |       |
+              +-------+
+
+search(7) => index = 1
+7 = keys[1]
+delete at child index+1 = 2
+
+search(9) => num_children-1 = 3-1 = index=2
+delete at child index = 2
+```
+
 #### Inserts
 
 When we insert into an internal node, we simply continue inserting into the
