@@ -184,3 +184,20 @@ class INode extends Node {
     }
 }
 
+// This is potentially encapsulates the resulting information after a node
+// splits. This is might help when passing split information from the split
+// child to the parent. Sea README for more details.
+/*
+class Split<T extends Node> {
+    public Integer key;
+    public T left;
+    public T right; // always splits rightward
+
+    public Split(Integer k, T l, T r) {
+        key = k;
+        right = r;
+        left = l;
+    }
+}
+*/
+
