@@ -67,7 +67,7 @@ public class Benchmarks {
         Table t = new Table("test_table", a);
         t.setClusteredIndex("A");
         t.setSecondaryIndex("B");
-        return new Table("test_table", a);
+        return t;
     }
 
     Vector<Tuple> setupTuples() {
