@@ -23,6 +23,9 @@ testtree: default
 bench: default
 	@java -ea Main -bench
 
+run: default
+	@java -ea Main -c
+
 register:
 ifeq ($(HOST), dontbuildbplustrees.please)
 	@sqlite3 /home/franco/benchmarks.db < benchmarks/results/benchmark_results.sql
