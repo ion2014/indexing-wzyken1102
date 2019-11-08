@@ -58,6 +58,9 @@ class Main {
         bench.updateBenchmark("A"); // indexing the primary column
         bench.updateBenchmark("B"); // indexing the secondary column
         bench.updateBenchmark("C"); // indexing the unindexed column
+        bench.getClusteredIndexBenchmark();
+        bench.getSecondaryIndexBenchmark();
+        bench.getBenchmark();
         bench.finish();
     }
 }
