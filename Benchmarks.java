@@ -144,7 +144,7 @@ public class Benchmarks {
         printDuration("bulkload", s/iter);
     }
 
-    void getWarmup(Table t) throws Exception {
+    void filterWarmup(Table t) throws Exception {
         System.gc();
         Set<String> cols = new HashSet<String>();
         cols.add("A");
@@ -168,7 +168,7 @@ public class Benchmarks {
         }
     }
 
-    public void getBenchmark() throws Exception {
+    public void filterBenchmark() throws Exception {
         Long sum = Long.valueOf(0);
         Table t = setupTable();
 
@@ -180,7 +180,7 @@ public class Benchmarks {
         cols.add("B");
         cols.add("C");
 
-        getWarmup(t);
+        filterWarmup(t);
         for (Integer i = 0; i < iterations; ++i) {
             Integer x = generator.nextInt();
             Integer y = generator.nextInt();
@@ -201,11 +201,11 @@ public class Benchmarks {
 
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        printDuration("no index get", s/iter);
+        printDuration("filter no index", s/iter);
     }
 
 
-    public void getSecondaryIndexBenchmark() throws Exception {
+    public void filterSecondaryIndexBenchmark() throws Exception {
         Long sum = Long.valueOf(0);
         Table t = setupTable();
 
@@ -219,7 +219,7 @@ public class Benchmarks {
         cols.add("B");
         cols.add("C");
 
-        getWarmup(t);
+        filterWarmup(t);
         for (Integer i = 0; i < iterations; ++i) {
             Integer x = generator.nextInt();
             Integer y = generator.nextInt();
@@ -240,10 +240,10 @@ public class Benchmarks {
 
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        printDuration("secondary index get", s/iter);
+        printDuration("filter secondary index", s/iter);
     }
 
-    public void getClusteredIndexBenchmark() throws Exception {
+    public void filterClusteredIndexBenchmark() throws Exception {
         Long sum = Long.valueOf(0);
         Table t = setupTable();
 
@@ -256,7 +256,7 @@ public class Benchmarks {
         cols.add("B");
         cols.add("C");
 
-        getWarmup(t);
+        filterWarmup(t);
         for (Integer i = 0; i < iterations; ++i) {
             Integer x = generator.nextInt();
             Integer y = generator.nextInt();
@@ -277,7 +277,7 @@ public class Benchmarks {
 
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        printDuration("clustered index get", s/iter);
+        printDuration("filter clustered index", s/iter);
     }
 
     public void deleteBenchmark() {
