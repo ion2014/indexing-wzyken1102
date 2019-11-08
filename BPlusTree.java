@@ -8,12 +8,16 @@ public class BPlusTree {
 
     // A tree has a root node, and an order
     public Node root;
+    private Integer order;
 
     // Required methods to implement. DO NOT change the function signatures of
     // these methods.
 
     // Instantiate a BPlusTree with a specific order
-    public BPlusTree(Integer order) { }
+    public BPlusTree(Integer order) {
+        root = new Node(order, NodeType.INTERNAL);
+        this.order = order;
+    }
 
     // Given a key, returns the value associated with that key or null if doesnt
     // exist
@@ -28,7 +32,7 @@ public class BPlusTree {
 
     // Optional methods to write
     // This might be a helpful function for your debugging needs
-    // public void print() { }
+     public void print() { }
 }
 
 // DO NOT change this enum. There are two types of nodes; an Internal node, and
@@ -95,32 +99,32 @@ abstract class Node {
 
     // You might want to implement a search method to search for the
     // corresponding position of a given key in the node
-    // abstract Integer search(Integer key);
+     abstract Integer search(Integer key) {};
 
     // You might want to implement a split method for nodes that need to split.
     // We use the split class defined above to encapsulate the information
     // resulting from the split.
-    // abstract Split split();          // Note the use of split here
+     abstract Split split();          // Note the use of split here
 
     // You might want to implement an insert method. We use the Split class to
     // indicate whether a node split as a result of an insert because splits in
     // lower levels of the tree may propagate upward.
-    // abstract Split insert(Integer key, Integer value); // And split here
+     abstract Split insert(Integer key, Integer value); // And split here
 
     // You might want to implement a delete method that traverses down the tree
     // calling a child's delete method until you hit the leaf.
-    // abstract void delete(Integer key);
+     abstract void delete(Integer key);
 
     // You might want to implement a get method that behaves similar to the
     // delete method. Here, the get method recursively calls the child's get
     // method and returns the integer up the recursion.
-    // abstract Integer get(Integer key);
+     abstract Integer get(Integer key);
 
     // You might want to implement a helper function that cleans up a node. Note
     // that the keys, values, and children of a node should be null if it is
     // invalid. Java's memory manager won't garbage collect if there are
     // references hanging about.
-    // abstract void cleanEntries();
+     abstract void cleanEntries();
 }
 
 // A leaf node (LNode) is an instance of a Node
@@ -148,6 +152,7 @@ class LNode extends Node {
         super(order, NodeType.LEAF);
 
         // A leaf needs to instantiate the values array.
+        values = new Integer[order];
     }
 }
 
