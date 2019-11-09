@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.concurrent.ThreadLocalRandom;
 import java.lang.Math;
+import java.util.Collections;
 
 public class Benchmarks {
     Random generator;
@@ -88,24 +89,26 @@ public class Benchmarks {
         }
     }
 
+    Vector<Integer> setupColumn() {
+        Vector<Integer> v = new Vector<Integer>();
+        for (Integer i = 0; i < dataSize; i++) {
+            v.add(i);
+        }
+        Collections.shuffle(v);
+        return v;
+    }
+
     Vector<Tuple> setupTuples() {
         Vector<Tuple> v = new Vector<Tuple>();
+        Vector<Integer> A = setupColumn();
+        Vector<Integer> B = setupColumn();
+        Vector<Integer> C = setupColumn();
 
-        for (Integer i = 0; i < dataSize; ++i) {
+        for (Integer i = 0; i < dataSize; i++) {
             Tuple t = new Tuple();
-
-            Integer A = generator.nextInt();
-            updateMaxMin("A", A);
-
-            Integer B = generator.nextInt();
-            updateMaxMin("B", B);
-
-            Integer C = generator.nextInt();
-            updateMaxMin("C", C);
-
-            t.put("A", A);
-            t.put("B", B);
-            t.put("C", C);
+            t.put("A", A.get(i));
+            t.put("B", B.get(i));
+            t.put("C", C.get(i));
             v.add(t);
         }
 
@@ -204,6 +207,15 @@ public class Benchmarks {
         //printDuration("filter no index", s/iter);
     }
 
+    private static Integer getRandomNumberInRange(Integer min, Integer max) {
+
+        if (min >= max) {
+            throw new IllegalArgumentException("max must be greater than min");
+        }
+
+        Random r = new Random();
+        return r.nextInt((max - min) + 1) + min;
+    }
 
     public void filterSecondaryIndexBenchmark() throws Exception {
         Float avg = Float.valueOf(0);
@@ -213,6 +225,7 @@ public class Benchmarks {
             Table t = setupTable();
 
             Vector<Tuple> v = setupTuples();
+
             t.load(v);
             t.setClusteredIndex("A");
             t.setClusteredIndex("B");
@@ -224,15 +237,8 @@ public class Benchmarks {
 
             filterWarmup(t);
             for (Integer i = 0; i < iterations; ++i) {
-                Integer x = generator.nextInt();
-                Integer y = generator.nextInt();
-
-                Integer low = x;
-                Integer high = y;
-                if (low > high) {
-                    low = y;
-                    high = x;
-                }
+                Integer low = getRandomNumberInRange(0, dataSize);
+                Integer high = low + Integer.valueOf((int)Math.round(dataSize * .3));
 
                 Filter f = new Filter("B", low, high);
                 startTimer();
@@ -266,15 +272,8 @@ public class Benchmarks {
 
             filterWarmup(t);
             for (Integer i = 0; i < iterations; ++i) {
-                Integer x = generator.nextInt();
-                Integer y = generator.nextInt();
-
-                Integer low = x;
-                Integer high = y;
-                if (low > high) {
-                    low = y;
-                    high = x;
-                }
+                Integer low = getRandomNumberInRange(0, dataSize);
+                Integer high = low + Integer.valueOf((int)Math.round(dataSize * .3));
 
                 Filter f = new Filter("A", low, high);
                 startTimer();
