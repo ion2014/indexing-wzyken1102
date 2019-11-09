@@ -220,7 +220,7 @@ public class Benchmarks {
     public void filterSecondaryIndexBenchmark() throws Exception {
         Float avg = Float.valueOf(0);
 
-        for (Integer c = 0; c < 30; c++) {
+        for (Integer c = 1; c < 30; c++) {
             Long sum = Long.valueOf(0);
             Table t = setupTable();
 
@@ -238,7 +238,8 @@ public class Benchmarks {
             filterWarmup(t);
             for (Integer i = 0; i < iterations; ++i) {
                 Integer low = getRandomNumberInRange(0, dataSize);
-                Integer high = low + Integer.valueOf((int)Math.round(dataSize * .3));
+                int off = (int)Math.round(dataSize * (c * .01));
+                Integer high = low + Integer.valueOf(off);
 
                 Filter f = new Filter("B", low, high);
                 startTimer();
@@ -273,7 +274,8 @@ public class Benchmarks {
             filterWarmup(t);
             for (Integer i = 0; i < iterations; ++i) {
                 Integer low = getRandomNumberInRange(0, dataSize);
-                Integer high = low + Integer.valueOf((int)Math.round(dataSize * .3));
+                int off = (int)Math.round(dataSize * (c * .01));
+                Integer high = low + Integer.valueOf(off);
 
                 Filter f = new Filter("A", low, high);
                 startTimer();
