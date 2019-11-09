@@ -206,78 +206,88 @@ public class Benchmarks {
 
 
     public void filterSecondaryIndexBenchmark() throws Exception {
-        Long sum = Long.valueOf(0);
-        Table t = setupTable();
+        Float avg = Float.valueOf(0);
 
-        Vector<Tuple> v = setupTuples();
-        t.load(v);
-        t.setClusteredIndex("A");
-        t.setClusteredIndex("B");
+        for (Integer c = 0; c < 30; c++) {
+            Long sum = Long.valueOf(0);
+            Table t = setupTable();
 
-        Set<String> cols = new HashSet<String>();
-        cols.add("A");
-        cols.add("B");
-        cols.add("C");
+            Vector<Tuple> v = setupTuples();
+            t.load(v);
+            t.setClusteredIndex("A");
+            t.setClusteredIndex("B");
 
-        filterWarmup(t);
-        for (Integer i = 0; i < iterations; ++i) {
-            Integer x = generator.nextInt();
-            Integer y = generator.nextInt();
+            Set<String> cols = new HashSet<String>();
+            cols.add("A");
+            cols.add("B");
+            cols.add("C");
 
-            Integer low = x;
-            Integer high = y;
-            if (low > high) {
-                low = y;
-                high = x;
+            filterWarmup(t);
+            for (Integer i = 0; i < iterations; ++i) {
+                Integer x = generator.nextInt();
+                Integer y = generator.nextInt();
+
+                Integer low = x;
+                Integer high = y;
+                if (low > high) {
+                    low = y;
+                    high = x;
+                }
+
+                Filter f = new Filter("B", low, high);
+                startTimer();
+                TupleIDSet pl = t.filter(f);
+                t.materialize(cols, pl);
+                sum += endTimer();
             }
 
-            Filter f = new Filter("B", low, high);
-            startTimer();
-            TupleIDSet pl = t.filter(f);
-            t.materialize(cols, pl);
-            sum += endTimer();
+            Float s = Float.valueOf(sum);
+            Float iter = Float.valueOf(iterations);
+            avg += s/iter;
         }
-
-        Float s = Float.valueOf(sum);
-        Float iter = Float.valueOf(iterations);
-        printDuration("filter secondary index", s/iter);
+        printDuration("filter secondary index", avg/Float.valueOf(30));
     }
 
     public void filterClusteredIndexBenchmark() throws Exception {
-        Long sum = Long.valueOf(0);
-        Table t = setupTable();
+        Float avg = Float.valueOf(0);
 
-        Vector<Tuple> v = setupTuples();
-        t.load(v);
-        t.setClusteredIndex("A");
+        for (Integer c = 0; c < 30; c++) {
+            Long sum = Long.valueOf(0);
+            Table t = setupTable();
 
-        Set<String> cols = new HashSet<String>();
-        cols.add("A");
-        cols.add("B");
-        cols.add("C");
+            Vector<Tuple> v = setupTuples();
+            t.load(v);
+            t.setClusteredIndex("A");
 
-        filterWarmup(t);
-        for (Integer i = 0; i < iterations; ++i) {
-            Integer x = generator.nextInt();
-            Integer y = generator.nextInt();
+            Set<String> cols = new HashSet<String>();
+            cols.add("A");
+            cols.add("B");
+            cols.add("C");
 
-            Integer low = x;
-            Integer high = y;
-            if (low > high) {
-                low = y;
-                high = x;
+            filterWarmup(t);
+            for (Integer i = 0; i < iterations; ++i) {
+                Integer x = generator.nextInt();
+                Integer y = generator.nextInt();
+
+                Integer low = x;
+                Integer high = y;
+                if (low > high) {
+                    low = y;
+                    high = x;
+                }
+
+                Filter f = new Filter("A", low, high);
+                startTimer();
+                TupleIDSet pl = t.filter(f);
+                t.materialize(cols, pl);
+                sum += endTimer();
             }
 
-            Filter f = new Filter("A", low, high);
-            startTimer();
-            TupleIDSet pl = t.filter(f);
-            t.materialize(cols, pl);
-            sum += endTimer();
+            Float s = Float.valueOf(sum);
+            Float iter = Float.valueOf(iterations);
+            avg += s/iter;
         }
-
-        Float s = Float.valueOf(sum);
-        Float iter = Float.valueOf(iterations);
-        printDuration("filter clustered index", s/iter);
+        printDuration("filter clustered index", avg/Float.valueOf(30));
     }
 
     public void deleteBenchmark() {
