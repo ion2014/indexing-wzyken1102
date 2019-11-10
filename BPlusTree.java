@@ -246,7 +246,7 @@ class LNode extends Node {
     @Override
     public Split insert(Integer key, Integer value) {
         Integer index = search(key);
-        System.out.println("insert searched result is " + index);
+        System.out.println("insert searched result is " + index + " children number is " + numChildren);
         if (index.equals(numChildren)) {
             keys[index] = key;
             values[index] = value;
