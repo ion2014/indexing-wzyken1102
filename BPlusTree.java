@@ -205,7 +205,7 @@ class LNode extends Node {
     @Override
     public Integer search(Integer key) {
         Integer index = binarySearch(keys, key, numChildren);
-        if (index == numChildren - 1 && keys[index] < key) {
+        if (index == numChildren - 1 || (index > 0 && keys[index] < key)) {
             return numChildren;
         }
         return index;
