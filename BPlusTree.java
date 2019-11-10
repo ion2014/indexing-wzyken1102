@@ -205,7 +205,6 @@ class LNode extends Node {
     @Override
     public Integer search(Integer key) {
         Integer index = binarySearch(keys, key, numChildren);
-
         return index;
     }
 
@@ -246,7 +245,7 @@ class LNode extends Node {
     @Override
     public Split insert(Integer key, Integer value) {
         Integer index = search(key);
-        System.out.println("insert searched result is " + index + " children number is " + numChildren);
+//        System.out.println("insert searched result is " + index + " children number is " + numChildren);
         if (index.equals(numChildren)) {
             keys[index] = key;
             values[index] = value;
@@ -310,7 +309,7 @@ class INode extends Node {
         super(order, NodeType.INTERNAL);
         // An INode needs to instantiate the children array
         this.order = order;
-        children = new Node[order+1];
+        children = new Node[order + 1];
         keys = new Integer[order];
         if (split != null) {
             children[0] = split.left;
@@ -322,7 +321,7 @@ class INode extends Node {
 
     @Override
     public Integer search(Integer key) {
-        Integer index = binarySearch(keys, key, numChildren);
+        Integer index = binarySearch(keys, key, numChildren - 1);
         return index;
     }
 
