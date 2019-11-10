@@ -60,7 +60,6 @@ class Main {
         bench.updateBenchmark("C"); // indexing the unindexed column
         bench.filterBenchmark();
         bench.filterClusteredIndexBenchmark();
-        bench.filterBenchmark();
         bench.filterSecondaryIndexBenchmark();
         bench.finish();
     }

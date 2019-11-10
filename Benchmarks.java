@@ -31,8 +31,8 @@ public class Benchmarks {
     public Benchmarks() {
         generator = new Random();
         generator.setSeed(12345);
-        iterations = 50;
-        dataSize = 100000;
+        iterations = 100;
+        dataSize = 10000;
         maxValues = new HashMap<String, Integer>();
         minValues = new HashMap<String, Integer>();
         banner = new Main().bannerid;
@@ -172,39 +172,37 @@ public class Benchmarks {
     }
 
     public void filterBenchmark() throws Exception {
-        Long sum = Long.valueOf(0);
-        Table t = setupTable();
+        Float avg = Float.valueOf(0);
 
-        Vector<Tuple> v = setupTuples();
-        t.load(v);
+        for (Integer c = 1; c < 30; c++) {
+            Long sum = Long.valueOf(0);
+            Table t = setupTable();
 
-        Set<String> cols = new HashSet<String>();
-        cols.add("A");
-        cols.add("B");
-        cols.add("C");
+            Vector<Tuple> v = setupTuples();
+            t.load(v);
 
-        filterWarmup(t);
-        for (Integer i = 0; i < iterations; ++i) {
-            Integer x = generator.nextInt();
-            Integer y = generator.nextInt();
+            Set<String> cols = new HashSet<String>();
+            cols.add("A");
+            cols.add("B");
+            cols.add("C");
 
-            Integer low = x;
-            Integer high = y;
-            if (low > high) {
-                low = y;
-                high = x;
+            filterWarmup(t);
+            for (Integer i = 0; i < iterations; ++i) {
+                Integer low = getRandomNumberInRange(0, dataSize);
+                int off = (int)Math.round(dataSize * (c * .01));
+                Integer high = low + Integer.valueOf(off);
+
+                Filter f = new Filter("B", low, high);
+                startTimer();
+                TupleIDSet pl = t.filter(f);
+                t.materialize(cols, pl);
+                sum += endTimer();
             }
-
-            Filter f = new Filter("B", low, high);
-            startTimer();
-            TupleIDSet pl = t.filter(f);
-            t.materialize(cols, pl);
-            sum += endTimer();
+            Float s = Float.valueOf(sum);
+            Float iter = Float.valueOf(iterations);
+            avg += s/iter;
         }
-
-        Float s = Float.valueOf(sum);
-        Float iter = Float.valueOf(iterations);
-        //printDuration("filter no index", s/iter);
+        printDuration("filter no index", avg/Float.valueOf(30));
     }
 
     private static Integer getRandomNumberInRange(Integer min, Integer max) {
@@ -228,7 +226,7 @@ public class Benchmarks {
 
             t.load(v);
             t.setClusteredIndex("A");
-            t.setClusteredIndex("B");
+            t.setSecondaryIndex("B");
 
             Set<String> cols = new HashSet<String>();
             cols.add("A");
