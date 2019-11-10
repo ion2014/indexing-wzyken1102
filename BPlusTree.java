@@ -247,7 +247,7 @@ class LNode extends Node {
     @Override
     public Split insert(Integer key, Integer value) {
         Integer index = search(key);
-        if (index == numChildren) {
+        if (index.equals(numChildren)) {
             keys[index] = key;
             values[index] = value;
             ++numChildren;
