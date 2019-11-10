@@ -398,8 +398,9 @@ class INode extends Node {
 
     @Override
     public Integer get(Integer key) {
+        System.out.println("Inode's children number is " + numChildren);
         Integer index = search(key);
-        return children[index].get(key);
+        return children[index + 1].get(key);
     }
 }
 
