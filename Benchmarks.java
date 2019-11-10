@@ -204,7 +204,7 @@ public class Benchmarks {
 
         Float s = Float.valueOf(sum);
         Float iter = Float.valueOf(iterations);
-        //printDuration("filter no index", s/iter);
+        printDuration("filter no index", s/iter);
     }
 
     private static Integer getRandomNumberInRange(Integer min, Integer max) {
