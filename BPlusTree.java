@@ -254,16 +254,18 @@ class LNode extends Node {
         } else if (keys[index].equals(key)) {
             values[index] = value;
         } else {
-            Integer preKey = keys[index];
-            Integer preVal = values[index];
-            for (int i = index + 1; i < numChildren; i++) {
-                Integer tempKey = keys[i];
-                Integer tempVal = values[i];
-                keys[i] = preKey;
-                values[i] = preVal;
-                preKey = tempKey;
-                preKey = tempVal;
-            }
+//            Integer preKey = keys[index];
+//            Integer preVal = values[index];
+//            for (int i = index + 1; i < numChildren; i++) {
+//                Integer tempKey = keys[i];
+//                Integer tempVal = values[i];
+//                keys[i] = preKey;
+//                values[i] = preVal;
+//                preKey = tempKey;
+//                preKey = tempVal;
+//            }
+            System.arraycopy(keys, index, keys, index + 1);
+            System.arraycopy(values, index, values, index + 1);
             keys[index] = key;
             values[index] = value;
             ++numChildren;
