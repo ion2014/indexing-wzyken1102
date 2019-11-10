@@ -270,7 +270,7 @@ class LNode extends Node {
             ++numChildren;
         }
 
-        if (numChildren == order) {
+        if (numChildren.equals(order)) {
             return this.split();
         } else {
             return null;
