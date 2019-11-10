@@ -113,10 +113,10 @@ abstract class Node {
 
     // You might want to implement a search method to search for the
     // corresponding position of a given key in the node
-    abstract Integer search(Integer key) {};
+    abstract Integer search(Integer key);
 
 
-    abstract  Integer mid() {};
+    abstract  Integer mid();
     // You might want to implement a split method for nodes that need to split.
     // We use the split class defined above to encapsulate the information
     // resulting from the split.
@@ -311,7 +311,7 @@ class INode extends Node {
         super(order, NodeType.INTERNAL);
         // An INode needs to instantiate the children array
         children = new Node[order+1];
-        keys = new String[order];
+        keys = new Integer[order];
         if (split != null) {
             children[0] = split.left;
             children[1] = split.right;
