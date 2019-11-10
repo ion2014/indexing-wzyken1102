@@ -31,6 +31,7 @@ public class BPlusTreeTests {
         values.add(x);
         tree.insert(x, x);
         if (x != tree.get(x)) {
+            System.out.println("the value get is " + tree.get(x));
             throw new RuntimeException("Bad insert! Can't find value "
                                        + x
                                        + " after inserting ");
