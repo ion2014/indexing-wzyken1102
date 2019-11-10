@@ -154,7 +154,7 @@ class LNode extends Node {
     public Integer[] keys;
     private Integer order;
     private int numChildren;
-    private Lnode rightSibling;
+    private LNode rightSibling;
 
     // DO NOT edit this method;
     public NodeType nodeType() { return NodeType.LEAF; };
@@ -172,7 +172,7 @@ class LNode extends Node {
         super(order, NodeType.LEAF);
 
         // A leaf needs to instantiate the values array.
-        keys = new String[order];
+        keys = new Integer[order];
         values = new Integer[order];
         numChildren = 0;
         rightSibling = null;
@@ -308,7 +308,7 @@ class INode extends Node {
 
     @Override
     public Integer search(Integer key) {
-        Integer index = binarySearch(keys[], key, numChildren);
+        Integer index = binarySearch(keys, key, numChildren);
         return index;
     }
 
@@ -319,7 +319,7 @@ class INode extends Node {
 
     @Override
     public Split split() {
-        Inode right = new INode(order, null);
+        INode right = new INode(order, null);
         Integer mid = mid();
         int index = 0;
         for (int i = mid; i < numChildren; i++) {
@@ -339,7 +339,7 @@ class INode extends Node {
 
         if (index == numChildren - 1 || key < keys[index]) {
             split = children[index].insert(key, value);
-        } else if (k == key[index]) {
+        } else if (key == keys[index]) {
             split = children[index + 1].insert(key, value);
         }
 
@@ -355,7 +355,7 @@ class INode extends Node {
 
         if (index == numChildren - 1) {
             keys[index] = splitToInsert.key;
-            values[index+1] = splitToInsert.right;
+            children[index+1] = splitToInsert.right;
         } else {
             for (Integer i = numChildren; i > index; i++) {
                 keys[i] = keys[i - 1];
@@ -393,7 +393,6 @@ class INode extends Node {
 public static Integer binarySearch(Integer[] keys, Integer key, int n) {
     Integer left = 0;
     Integer right = n-1;
-    if (keys[righ])
     while (left < right) {
         Integer mid = left + (right - left)/2;
         if (keys[mid] >= key) {
