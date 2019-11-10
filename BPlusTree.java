@@ -143,7 +143,7 @@ abstract class Node {
     //abstract void cleanEntries();
     public static Integer binarySearch(Integer[] keys, Integer key, int n) {
         Integer left = 0;
-        Integer right = n-1;
+        Integer right = n;
         while (left < right) {
             Integer mid = left + (right - left)/2;
             if (keys[mid] >= key) {
@@ -204,9 +204,7 @@ class LNode extends Node {
     @Override
     public Integer search(Integer key) {
         Integer index = binarySearch(keys, key, numChildren);
-        if (index == numChildren - 1 || (index > 0 && keys[index] < key)) {
-            return numChildren;
-        }
+
         return index;
     }
 
