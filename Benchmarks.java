@@ -228,7 +228,7 @@ public class Benchmarks {
 
             t.load(v);
             t.setClusteredIndex("A");
-            t.setClusteredIndex("B");
+            t.setSecondaryIndex("B");
 
             Set<String> cols = new HashSet<String>();
             cols.add("A");
