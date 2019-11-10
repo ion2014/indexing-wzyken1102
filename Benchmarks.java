@@ -31,8 +31,8 @@ public class Benchmarks {
     public Benchmarks() {
         generator = new Random();
         generator.setSeed(12345);
-        iterations = 50;
-        dataSize = 100000;
+        iterations = 100;
+        dataSize = 10000;
         maxValues = new HashMap<String, Integer>();
         minValues = new HashMap<String, Integer>();
         banner = new Main().bannerid;
