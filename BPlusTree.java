@@ -16,7 +16,7 @@ public class BPlusTree {
 
     // Instantiate a BPlusTree with a specific order
     public BPlusTree(Integer order) {
-        root = new INode(order);
+        root = new LNode(order);
         this.order = order;
     }
 
@@ -141,6 +141,20 @@ abstract class Node {
     // invalid. Java's memory manager won't garbage collect if there are
     // references hanging about.
     //abstract void cleanEntries();
+    public static Integer binarySearch(Integer[] keys, Integer key, int n) {
+        Integer left = 0;
+        Integer right = n-1;
+        while (left < right) {
+            Integer mid = left + (right - left)/2;
+            if (keys[mid] >= key) {
+                right = mid;
+            } else {
+                left = mid+1;
+            }
+        }
+
+        return right;
+    }
 }
 
 // A leaf node (LNode) is an instance of a Node
@@ -390,20 +404,6 @@ class INode extends Node {
     }
 }
 
-public static Integer binarySearch(Integer[] keys, Integer key, int n) {
-    Integer left = 0;
-    Integer right = n-1;
-    while (left < right) {
-        Integer mid = left + (right - left)/2;
-        if (keys[mid] >= key) {
-            right = mid;
-        } else {
-            left = mid+1;
-        }
-    }
-
-    return right;
-}
 
 // This is potentially encapsulates the resulting information after a node
 // splits. This is might help when passing split information from the split
