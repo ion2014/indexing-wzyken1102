@@ -264,8 +264,8 @@ class LNode extends Node {
 //                preKey = tempKey;
 //                preKey = tempVal;
 //            }
-            System.arraycopy(keys, index, keys, index + 1);
-            System.arraycopy(values, index, values, index + 1);
+            System.arraycopy(keys, index, keys, index + 1, numChildren - index);
+            System.arraycopy(values, index, values, index + 1, numChildren - index);
             keys[index] = key;
             values[index] = value;
             ++numChildren;
