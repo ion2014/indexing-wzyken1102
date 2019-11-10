@@ -165,9 +165,7 @@ class LNode extends Node {
     // change it, your tree will not be correct according to our checker. Values
     // in this array that are not valid should be null.
     public Integer[] values;
-    public Integer[] keys;
-    private Integer order;
-    private int numChildren;
+    public Integer order;
     private LNode rightSibling;
 
     // DO NOT edit this method;
@@ -186,6 +184,7 @@ class LNode extends Node {
         super(order, NodeType.LEAF);
 
         // A leaf needs to instantiate the values array.
+        this.order = order;
         keys = new Integer[order];
         values = new Integer[order];
         numChildren = 0;
@@ -270,7 +269,7 @@ class LNode extends Node {
             ++numChildren;
         }
 
-        if (numChildren.equals(order)) {
+        if (numChildren == order) {
             return this.split();
         } else {
             return null;
@@ -293,9 +292,7 @@ class INode extends Node {
     // is a leaf or internal node if the get function is an abstract method in
     // the Node class.
     public Node[] children;
-    public Integer[] keys;
     public Integer order;
-    public int numChildren;
 
     // DO NOT edit this method;
     public NodeType nodeType() { return NodeType.INTERNAL; };
@@ -310,6 +307,7 @@ class INode extends Node {
         // superclass, identifying itself as a leaf.
         super(order, NodeType.INTERNAL);
         // An INode needs to instantiate the children array
+        this.order = order;
         children = new Node[order+1];
         keys = new Integer[order];
         if (split != null) {
