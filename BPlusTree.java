@@ -144,7 +144,7 @@ abstract class Node {
     public static Integer binarySearch(Integer[] keys, Integer key, int n) {
         Integer left = 0;
         Integer right = n;
-        System.out.println("left is " + left + " right is " + right);
+//        System.out.println("left is " + left + " right is " + right);
         while (left < right) {
             Integer mid = left + (right - left)/2;
             if (keys[mid] >= key) {
@@ -268,7 +268,7 @@ class LNode extends Node {
             ++numChildren;
         }
 
-        if (numChildren == order) {
+        if (numChildren.equals(order)) {
             return this.split();
         } else {
             return null;
