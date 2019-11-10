@@ -188,15 +188,9 @@ public class Benchmarks {
 
             filterWarmup(t);
             for (Integer i = 0; i < iterations; ++i) {
-                Integer x = generator.nextInt();
-                Integer y = generator.nextInt();
-
-                Integer low = x;
-                Integer high = y;
-                if (low > high) {
-                    low = y;
-                    high = x;
-                }
+                Integer low = getRandomNumberInRange(0, dataSize);
+                int off = (int)Math.round(dataSize * (c * .01));
+                Integer high = low + Integer.valueOf(off);
 
                 Filter f = new Filter("B", low, high);
                 startTimer();
