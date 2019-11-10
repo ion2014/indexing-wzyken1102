@@ -334,12 +334,15 @@ class INode extends Node {
     public Split split() {
         INode right = new INode(order, null);
         Integer mid = mid();
-        int index = 0;
-        for (int i = mid; i < numChildren; i++) {
-            right.keys[index] = keys[i];
-            right.children[index] = children[i];
-            ++index;
-        }
+//        int index = 0;
+//        for (int i = mid; i < numChildren; i++) {
+//            right.keys[index] = keys[i];
+//            right.children[index] = children[i];
+//            ++index;
+//        }
+        System.arraycopy(keys, mid, right.keys, 0, numChildren - mid - 1);
+        System.arraycopy(children, mid, right.children, 0, numChildren - mid);
+        right.numChildren = numChildren - mid;
         numChildren = mid;
 
         return new Split(keys[mid - 1], this, right);
