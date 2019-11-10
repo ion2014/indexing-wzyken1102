@@ -30,8 +30,8 @@ public class BPlusTreeTests {
         count++;
         values.add(x);
         tree.insert(x, x);
+        //System.out.println("the value get is " + count + " x is " + x + " value is " + tree.get(x));
         if (x != tree.get(x)) {
-            System.out.println("the value get is " + count + " " + tree.get(x));
             throw new RuntimeException("Bad insert! Can't find value "
                                        + x
                                        + " after inserting ");
@@ -133,7 +133,10 @@ public class BPlusTreeTests {
         if (tree.root.nodeType() == NodeType.INTERNAL) {
             INodeValidator v = new INodeValidator((INode)tree.root);
             ValidationError result = v.validate();
-            if (result != null) { return result; }
+            if (result != null) {
+                result.printError();
+                return result; 
+            }
         }
         System.out.println("Successfully validated tree");
         return null;
@@ -253,6 +256,7 @@ class INodeValidator {
                 Integer h = node.keys[counter];
                 ValidationError result = validateChildKeys(null, h, child);
                 if (result != null) {
+                    result.printError();
                     return result;
                 }
             }

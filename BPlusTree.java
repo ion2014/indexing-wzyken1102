@@ -29,13 +29,9 @@ public class BPlusTree {
     // Insert a key-value pair into the tree. This tree does not need to support
     // duplicate keys
     public void insert(Integer key, Integer value) {
-        if (root.nodeType() == NodeType.LEAF) {
-            Split rootSplit = root.insert(key, value);
-            if (rootSplit != null) {
-                root = new INode(order, rootSplit);
-            }
-        } else {
-            root.insert(key, value);
+        Split rootSplit = root.insert(key, value);
+        if (rootSplit != null) {
+            root = new INode(order, rootSplit);
         }
     }
 
@@ -195,7 +191,7 @@ class LNode extends Node {
     @Override
     public Integer get(Integer key) {
         Integer index = search(key);
-        if (index < numChildren) {
+        if (index < numChildren && key.equals(keys[index])) {
             return values[index];
         } else {
             return null;
@@ -216,23 +212,25 @@ class LNode extends Node {
     @Override
     public Split split() {
         LNode right = new LNode(order);
-        int index = 0;
-        for (int i = mid(); i < order; i++) {
-            right.keys[index] = this.keys[i];
-            right.values[index] = this.values[i];
-            ++index;
+        Integer mid = mid();
+        System.arraycopy(keys, mid, right.keys, 0, numChildren - mid);
+        System.arraycopy(values, mid, right.values, 0, numChildren - mid);
+        right.numChildren = numChildren - mid;
+        Integer newKey = keys[mid];
+        for (int i = mid; i < order; i++) {
+            keys[i] = null;
+            values[i] = null;
         }
-        right.numChildren = index;
         this.rightSibling = right;
-        this.numChildren -= index;
-        return new Split(keys[mid()], this, right);
+        this.numChildren = mid;
+        return new Split(newKey, this, right);
     }
 
     @Override
     public void delete(Integer key) {
         Integer index = search(key);
 
-        if (keys[index] != key || index == numChildren) {
+        if (keys[index] != key || index.equals(numChildren)) {
             return;
         }
         for (Integer i = index; i < numChildren - 1; i++) {
@@ -253,16 +251,6 @@ class LNode extends Node {
         } else if (keys[index].equals(key)) {
             values[index] = value;
         } else {
-//            Integer preKey = keys[index];
-//            Integer preVal = values[index];
-//            for (int i = index + 1; i < numChildren; i++) {
-//                Integer tempKey = keys[i];
-//                Integer tempVal = values[i];
-//                keys[i] = preKey;
-//                values[i] = preVal;
-//                preKey = tempKey;
-//                preKey = tempVal;
-//            }
             System.arraycopy(keys, index, keys, index + 1, numChildren - index);
             System.arraycopy(values, index, values, index + 1, numChildren - index);
             keys[index] = key;
@@ -315,8 +303,8 @@ class INode extends Node {
             children[0] = split.left;
             children[1] = split.right;
             keys[0] = split.key;
+            numChildren = 2;
         }
-        numChildren = 2;
     }
 
     @Override
@@ -333,19 +321,19 @@ class INode extends Node {
     @Override
     public Split split() {
         INode right = new INode(order, null);
-        Integer mid = mid();
-//        int index = 0;
-//        for (int i = mid; i < numChildren; i++) {
-//            right.keys[index] = keys[i];
-//            right.children[index] = children[i];
-//            ++index;
-//        }
+        Integer mid = order % 2 == 0 ? mid() : mid() + 1;
         System.arraycopy(keys, mid, right.keys, 0, numChildren - mid - 1);
         System.arraycopy(children, mid, right.children, 0, numChildren - mid);
         right.numChildren = numChildren - mid;
         numChildren = mid;
+        Integer newKey = keys[mid - 1];
+        
+        for (int i = mid - 1; i < order; i++) {
+            keys[i] = null;
+            children[i + 1] = null;
+        }
 
-        return new Split(keys[mid - 1], this, right);
+        return new Split(newKey, this, right);
     }
 
     @Override
@@ -355,7 +343,7 @@ class INode extends Node {
 
         if (index == numChildren - 1 || key < keys[index]) {
             split = children[index].insert(key, value);
-        } else if (key == keys[index]) {
+        } else if (key.equals(keys[index])) {
             split = children[index + 1].insert(key, value);
         }
 
@@ -371,12 +359,10 @@ class INode extends Node {
 
         if (index == numChildren - 1) {
             keys[index] = splitToInsert.key;
-            children[index+1] = splitToInsert.right;
+            children[index + 1] = splitToInsert.right;
         } else {
-            for (Integer i = numChildren; i > index; i++) {
-                keys[i] = keys[i - 1];
-                children[i + 1] = children[i];
-            }
+            System.arraycopy(keys, index, keys, index + 1, numChildren - index - 1);
+            System.arraycopy(children, index + 1, children, index + 2, numChildren - index - 1);
             keys[index] = splitToInsert.key;
             children[index + 1] = splitToInsert.right;
         }
@@ -393,20 +379,20 @@ class INode extends Node {
     public void delete(Integer key) {
         Integer index = this.search(key);
         if (index == numChildren - 1 || key < keys[index]) {
-            children[index] = null;
-        } else if (key == keys[index]) {
-            children[index+1] = null;
+            children[index].delete(key);
+        } else if (key.equals(keys[index])) {
+            children[index+1].delete(key);
         }
     }
 
     @Override
     public Integer get(Integer key) {
-        System.out.println("Inode's children number is !!!!" + numChildren);
         Integer index = search(key);
-        if (key >= keys[index]) {
-            return children[index + 1].get(key);
-        } else {
+        //System.out.println("Inode's children number is " + numChildren + " the index is " + index + " the keysindex is " + keys[index]);
+        if (index == numChildren - 1 || key < keys[index]) {
             return children[index].get(key);
+        } else {
+            return children[index + 1].get(key);
         }
     }
 }
