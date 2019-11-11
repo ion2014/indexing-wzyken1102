@@ -19,8 +19,12 @@ public class Table {
         }
     }
 
-    public void setClusteredIndex(String attribute) { }
-    public void setSecondaryIndex(String attribute) { }
+    public void setClusteredIndex(String attribute) {
+
+    }
+    public void setSecondaryIndex(String attribute) {
+
+    }
 
     // Insert a tuple into the Table
     public void insert(Tuple tuple) {

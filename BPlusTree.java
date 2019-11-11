@@ -237,6 +237,8 @@ class LNode extends Node {
             keys[i] = keys[i+1];
             values[i] = values[i+1];
         }
+        keys[numChildren - 1] = null;
+        values[numChildren - 1] = null;
         --numChildren;
     }
 
@@ -322,6 +324,7 @@ class INode extends Node {
     public Split split() {
         INode right = new INode(order, null);
         Integer mid = order % 2 == 0 ? mid() : mid() + 1;
+        //Consider the situation of odd or even
         System.arraycopy(keys, mid, right.keys, 0, numChildren - mid - 1);
         System.arraycopy(children, mid, right.children, 0, numChildren - mid);
         right.numChildren = numChildren - mid;
@@ -396,6 +399,123 @@ class INode extends Node {
         }
     }
 }
+
+class PostingList {
+    public Set<Integer> idList;
+    public Integer value;
+    public PostingList(Integer value) {
+        this.value = value;
+        idList = new HashSet<>();
+    }
+}
+
+//class SecLNode extends Node {
+//    public PostingList[] values;
+//    public Integer order;
+//    private SecLNode rightSibling;
+//
+//    // DO NOT edit this method;
+//    public NodeType nodeType() { return NodeType.LEAF; };
+//
+//    // You may edit everything that occurs in this class below this line.
+//    // *************************************************************************
+//
+//    // A leaf has siblings on the left and on the right.
+//
+//    // A leaf node is instantiated with an order
+//    public SecLNode(Integer order) {
+//
+//        // Because this is also a Node, we instantiate the Node (abstract)
+//        // superclass, identifying itself as a leaf.
+//        super(order, NodeType.LEAF);
+//
+//        // A leaf needs to instantiate the values array.
+//        this.order = order;
+//        keys = new Integer[order];
+//        values = new PostingList[order];
+//        numChildren = 0;
+//        rightSibling = null;
+//    }
+//
+//    @Override
+//    public Integer get(Integer key) {
+//        Integer index = search(key);
+//        if (index < numChildren && key.equals(keys[index])) {
+//            return values[index].value;
+//        } else {
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public Integer search(Integer key) {
+//        Integer index = binarySearch(keys, key, numChildren);
+//        return index;
+//    }
+//
+//    @Override
+//    public Integer mid() {
+//        return order/2;
+//    }
+//
+//    @Override
+//    public Split split() {
+//        SecLNode right = new SecLNode(order);
+//        Integer mid = mid();
+//        System.arraycopy(keys, mid, right.keys, 0, numChildren - mid);
+//        System.arraycopy(values, mid, right.values, 0, numChildren - mid);
+//        right.numChildren = numChildren - mid;
+//        Integer newKey = keys[mid];
+//        for (int i = mid; i < order; i++) {
+//            keys[i] = null;
+//            values[i] = null;
+//        }
+//        this.rightSibling = right;
+//        this.numChildren = mid;
+//        return new Split(newKey, this, right);
+//    }
+//
+//    @Override
+//    public void delete(Integer key) {
+//        Integer index = search(key);
+//
+//        if (keys[index] != key || index.equals(numChildren)) {
+//            return;
+//        }
+//        for (Integer i = index; i < numChildren - 1; i++) {
+//            keys[i] = keys[i+1];
+//            values[i] = values[i+1];
+//        }
+//        --numChildren;
+//    }
+//
+//    @Override
+//    public Split insert(Integer key, Integer value) {
+//        Integer index = search(key);
+////        System.out.println("insert searched result is " + index + " children number is " + numChildren);
+//        if (index.equals(numChildren)) {
+//            keys[index] = key;
+//            values[index] = new PostingList(value);
+//            values[index].add(value);
+//            ++numChildren;
+//        } else if (keys[index].equals(key)) {
+//            values[index].add(value);
+//        } else {
+//            System.arraycopy(keys, index, keys, index + 1, numChildren - index);
+//            System.arraycopy(values, index, values, index + 1, numChildren - index);
+//            keys[index] = key;
+//            values[index] = new HashSet<>();
+//            values[index].add(value);
+//            ++numChildren;
+//        }
+//
+//        if (numChildren.equals(order)) {
+//            return this.split();
+//        } else {
+//            return null;
+//        }
+//    }
+//}
 
 
 // This is potentially encapsulates the resulting information after a node
