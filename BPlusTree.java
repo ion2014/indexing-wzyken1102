@@ -49,7 +49,7 @@ public class BPlusTree {
             Integer index = lowerNode.search(f.low);
             while (lowerNode != null) {
                 while (index < lowerNode.numChildren && lowerNode.keys[index] <= f.high) {
-//                    result.addAll(lowerNode.values[index]);
+                    result.addAll(lowerNode.values[index]);
 //                    System.out.println(result);
 //                    System.out.println("the key is " + lowerNode.keys[index] + " the index is " + index);
                     ++index;
