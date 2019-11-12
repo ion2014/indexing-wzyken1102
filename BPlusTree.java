@@ -49,11 +49,10 @@ public class BPlusTree {
             Integer index = lowerNode.search(f.low);
             while (lowerNode != null) {
                 while (index < lowerNode.numChildren && lowerNode.keys[index] <= f.high) {
-                    result.addAll(lowerNode.values[index]);
-                    System.out.println(result);
-                    System.out.println("the key is " + lowerNode.keys[index] + " the index is " + index);
+//                    result.addAll(lowerNode.values[index]);
+//                    System.out.println(result);
+//                    System.out.println("the key is " + lowerNode.keys[index] + " the index is " + index);
                     ++index;
-                    System.out.println("Now the numChildren is " + lowerNode.numChildren);
                 }
                 if (index.equals(lowerNode.numChildren)) {
                     //System.out.println(lowerNode.rightSibling != null ? "Normal" : "the right sibling is null");
@@ -597,12 +596,6 @@ class SecLNode extends Node {
         }
     }
 
-//    public PostingList getRange(Filter f) {
-//        if (f.low != null && f.high != null) {
-//
-//        }
-//    }
-
     public PostingList getIDs(Integer key) {
         Integer index = search(key);
         if (index < numChildren && key.equals(keys[index])) {
@@ -640,13 +633,6 @@ class SecLNode extends Node {
         }
         this.rightSibling = right;
         this.numChildren = mid;
-        //List<Integer> t = Arrays.asList(keys);
-        //for (Integer i:keys) {
-        //    if (i != null && i.equals(100)) {
-        //        System.out.println("this keys is " + t);
-        //        System.out.println("this right sib is " + Arrays.asList(this.rightSibling.keys));
-        //    }
-        //}
         
         return new Split(newKey, this, right);
     }

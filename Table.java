@@ -62,11 +62,9 @@ public class Table {
             Integer index = 0;
             while (lowerNode != null) {
                 while (index < lowerNode.numChildren) {
-                    System.out.println(lowerNode.keys[index] + " - ");
                     ++index;
                 }
                 if (index.equals(lowerNode.numChildren)) {
-                    System.out.println("right is -- ");
                     lowerNode = lowerNode.rightSibling;
                     index = 0;
                 } else {
@@ -120,8 +118,6 @@ public class Table {
         }
 
         if (f.op == FilterOp.AND) {
-            System.out.println(left);
-            System.out.println(right);
             left.retainAll(right);
         } else if (f.op == FilterOp.OR) {
             left.addAll(right);
