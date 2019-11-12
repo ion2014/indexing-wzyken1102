@@ -8,6 +8,10 @@ public class Table {
     String name = "This is table";
     Hashtable<String, Column> attributes;
     Vector<Boolean> valid;
+    BPlusTree primaryIndex;
+    Map<String, BPlusTree> secondaryIndex = new HashMap<>();
+    keyValue[] indice;
+    String primaryKey;
 
     public Table(String table_name, HashSet<String> attribute_names) {
         name = table_name;
@@ -20,10 +24,40 @@ public class Table {
     }
 
     public void setClusteredIndex(String attribute) {
+        primaryKey = attribute;
+        primaryIndex = new BPlusTree(8);
+        Column col = attributes.get(attribute);
+        indice = new keyValue[col.size()];
 
+        for (int i = 0; i < col.size(); i++) {
+            indice[i] = new keyValue(i, col.get(i));
+        }
+        Arrays.sort(indice, (a,b)->(a.value.equals(b.value) ? a.index - b.index : a.value - b.value));
+        Set<Integer> values = new HashSet<>();
+
+        for (int i = 0; i < indice.length; i++) {
+            if (values.contains(indice[i].value)) continue;
+            primaryIndex.insert(indice[i].value, i);
+            values.add(indice[i].value);
+        }
+
+        for (String key:attributes.keySet()) {
+            Column newCol = new Column();
+            Column oldCol = attributes.get(key);
+            for (int i = 0; i < indice.length; i++) {
+                col.add(oldCol.get(indice[i].index));
+            }
+            attributes.put(key, newCol);
+        }
     }
-    public void setSecondaryIndex(String attribute) {
 
+    public void setSecondaryIndex(String attribute) {
+        BPlusTree secondTree = new BPlusTree(8, true);
+        Column col = attributes.get(attribute);
+        for (int i = 0; i < col.size(); i++) {
+            secondTree.insert(col.get(i), i);
+        }
+        secondaryIndex.put(attribute, secondTree);
     }
 
     // Insert a tuple into the Table
@@ -86,30 +120,65 @@ public class Table {
         }
 
         TupleIDSet result = new TupleIDSet();
-        int counter = 0;
 
-        if ((f.low != null) && (f.high != null)) {
-            for (int v : col) {
-                if ((v >= f.low) && (v <= f.high) && valid.get(counter)) {
-                    result.add(counter);
+        if (attribute.equals(primaryKey)) {
+            if (f.low != null && f.high != null) {
+                Integer lowIndex = primaryIndex.get(f.low);
+                int i = lowIndex;
+                while (indice[i].value <= f.high) {
+                    if (valid.get(i)) {
+                        result.add(i);
+                    }
+                    ++i;
                 }
-                counter++;
+            } else if (f.low != null) {
+                Integer lowIndex = primaryIndex.get(f.low);
+                for (int i = lowIndex; i < indice.length; i++) {
+                    if (valid.get(i)) {
+                        result.add(i);
+                    }
+                }
+            } else if (f.high != null) {
+                Integer highIndex = primaryIndex.get(f.high);
+                while (indice[highIndex].value.equals(f.high) && highIndex < indice.length) {
+                    ++highIndex;
+                }
+                for (int i = 0; i < highIndex; i++) {
+                    if (valid.get(i)) {
+                        result.add(i);
+                    }
+                }
             }
-        } else if (f.low != null) {
-            for (int v : col) {
-                if ((v >= f.low) && valid.get(counter)) {
-                    result.add(counter);
+        } else if (secondaryIndex.containsKey(attribute)) {
+            BPlusTree bPlusTree = secondaryIndex.get(attribute);
+            bPlusTree.getRange(f, result);
+        } else {
+            int counter = 0;
+
+            if ((f.low != null) && (f.high != null)) {
+                for (int v : col) {
+                    if ((v >= f.low) && (v <= f.high) && valid.get(counter)) {
+                        result.add(counter);
+                    }
+                    counter++;
                 }
-                counter++;
-            }
-        } else if (f.high != null) {
-            for (int v : col) {
-                if ((v <= f.high) && valid.get(counter)) {
-                    result.add(counter);
+            } else if (f.low != null) {
+                for (int v : col) {
+                    if ((v >= f.low) && valid.get(counter)) {
+                        result.add(counter);
+                    }
+                    counter++;
                 }
-                counter++;
+            } else if (f.high != null) {
+                for (int v : col) {
+                    if ((v <= f.high) && valid.get(counter)) {
+                        result.add(counter);
+                    }
+                    counter++;
+                }
             }
         }
+
         return result;
     }
 
@@ -187,5 +256,14 @@ public class Table {
     public String toString() {
         String v = name + " Columns: " + attributes.keySet();
         return v;
+    }
+}
+
+class keyValue {
+    Integer index;
+    Integer value;
+    public keyValue(Integer index, Integer value) {
+        this.index = index;
+        this.value = value;
     }
 }
