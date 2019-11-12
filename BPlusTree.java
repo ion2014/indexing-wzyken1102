@@ -50,10 +50,15 @@ public class BPlusTree {
             while (lowerNode != null) {
                 while (index < lowerNode.numChildren && lowerNode.keys[index] <= f.high) {
                     result.addAll(lowerNode.values[index]);
+                    System.out.println(result);
+                    System.out.println("the key is " + lowerNode.keys[index] + " the index is " + index);
                     ++index;
+                    System.out.println("Now the numChildren is " + lowerNode.numChildren);
                 }
                 if (index.equals(lowerNode.numChildren)) {
+                    //System.out.println(lowerNode.rightSibling != null ? "Normal" : "the right sibling is null");
                     lowerNode = lowerNode.rightSibling;
+                    index = 0;
                 } else {
                     break;
                 }
@@ -68,6 +73,7 @@ public class BPlusTree {
                 }
                 if (index.equals(lowerNode.numChildren)) {
                     lowerNode = lowerNode.rightSibling;
+                    index = 0;
                 }
             }
         } else if (f.high != null) {
@@ -80,6 +86,7 @@ public class BPlusTree {
                 }
                 if (index.equals(lowerNode.numChildren)) {
                     lowerNode = lowerNode.rightSibling;
+                    index = 0;
                 } else {
                     break;
                 }
@@ -315,9 +322,14 @@ class LNode extends Node {
         System.arraycopy(values, mid, right.values, 0, numChildren - mid);
         right.numChildren = numChildren - mid;
         Integer newKey = keys[mid];
+        
         for (int i = mid; i < order; i++) {
             keys[i] = null;
             values[i] = null;
+        }
+        
+        if (this.rightSibling != null) {
+            right.rightSibling = this.rightSibling;
         }
         this.rightSibling = right;
         this.numChildren = mid;
@@ -623,8 +635,19 @@ class SecLNode extends Node {
             keys[i] = null;
             values[i] = null;
         }
+        if (this.rightSibling != null) {
+            right.rightSibling = this.rightSibling;
+        }
         this.rightSibling = right;
         this.numChildren = mid;
+        //List<Integer> t = Arrays.asList(keys);
+        //for (Integer i:keys) {
+        //    if (i != null && i.equals(100)) {
+        //        System.out.println("this keys is " + t);
+        //        System.out.println("this right sib is " + Arrays.asList(this.rightSibling.keys));
+        //    }
+        //}
+        
         return new Split(newKey, this, right);
     }
 

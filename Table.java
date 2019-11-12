@@ -32,7 +32,7 @@ public class Table {
         for (int i = 0; i < col.size(); i++) {
             indice[i] = new keyValue(i, col.get(i));
         }
-        Arrays.sort(indice, (a,b)->(a.value.equals(b.value) ? a.index - b.index : a.value - b.value));
+        Arrays.sort(indice, (a,b)->(a.value - b.value));
         Set<Integer> values = new HashSet<>();
 
         for (int i = 0; i < indice.length; i++) {
@@ -58,6 +58,21 @@ public class Table {
             secondTree.insert(col.get(i), i);
         }
         secondaryIndex.put(attribute, secondTree);
+            SecLNode lowerNode = secondTree.root.getLastRow(0);
+            Integer index = 0;
+            while (lowerNode != null) {
+                while (index < lowerNode.numChildren) {
+                    System.out.println(lowerNode.keys[index] + " - ");
+                    ++index;
+                }
+                if (index.equals(lowerNode.numChildren)) {
+                    System.out.println("right is -- ");
+                    lowerNode = lowerNode.rightSibling;
+                    index = 0;
+                } else {
+                    break;
+                }
+            }
     }
 
     // Insert a tuple into the Table
@@ -105,6 +120,8 @@ public class Table {
         }
 
         if (f.op == FilterOp.AND) {
+            System.out.println(left);
+            System.out.println(right);
             left.retainAll(right);
         } else if (f.op == FilterOp.OR) {
             left.addAll(right);
@@ -127,7 +144,7 @@ public class Table {
                 if (lowIndex == null) return result;
                 
                 int i = lowIndex;
-                System.out.println("the index is " + i);
+                //System.out.println("the index is " + i);
                 while (i < indice.length && indice[i].value <= f.high) {
                     if (valid.get(i)) {
                         result.add(i);
@@ -136,14 +153,14 @@ public class Table {
                     ++i;
                 }
             } else if (f.low != null) {
-                Integer lowIndex = primaryIndex.get(f.low);
+                Integer lowIndex = primaryIndex.getBound(f.low);
                 for (int i = lowIndex; i < indice.length; i++) {
                     if (valid.get(i)) {
                         result.add(i);
                     }
                 }
             } else if (f.high != null) {
-                Integer highIndex = primaryIndex.get(f.high);
+                Integer highIndex = primaryIndex.getBound(f.high);
                 while (indice[highIndex].value.equals(f.high) && highIndex < indice.length) {
                     ++highIndex;
                 }
