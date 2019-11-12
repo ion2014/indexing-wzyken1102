@@ -45,7 +45,7 @@ public class Table {
             Column newCol = new Column();
             Column oldCol = attributes.get(key);
             for (int i = 0; i < indice.length; i++) {
-                col.add(oldCol.get(indice[i].index));
+                newCol.add(oldCol.get(indice[i].index));
             }
             attributes.put(key, newCol);
         }
