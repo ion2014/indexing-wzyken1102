@@ -123,12 +123,16 @@ public class Table {
 
         if (attribute.equals(primaryKey)) {
             if (f.low != null && f.high != null) {
-                Integer lowIndex = primaryIndex.get(f.low);
+                Integer lowIndex = primaryIndex.getBound(f.low);
+                if (lowIndex == null) return result;
+                
                 int i = lowIndex;
-                while (indice[i].value <= f.high) {
+                System.out.println("the index is " + i);
+                while (i < indice.length && indice[i].value <= f.high) {
                     if (valid.get(i)) {
                         result.add(i);
                     }
+                    //System.out.println("the index is " + i);
                     ++i;
                 }
             } else if (f.low != null) {
@@ -230,6 +234,7 @@ public class Table {
 
                 Tuple t = new Tuple();
                 for (String attribute : attributes) {
+                    //System.out.println(this.attributes.get(attribute).size());
                     t.put(attribute,
                           this.attributes.get(attribute).get(tupleId));
                 }

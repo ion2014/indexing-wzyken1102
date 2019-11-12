@@ -1,5 +1,3 @@
-import javafx.geometry.Pos;
-
 import java.util.*;
 import java.lang.*;
 
@@ -13,7 +11,7 @@ public class BPlusTree {
     public Node root;
     private Integer order;
     private boolean isSecondary;
-    private Integer minKey;
+    private Integer minKey = Integer.MAX_VALUE;
 
     // Required methods to implement. DO NOT change the function signatures of
     // these methods.
@@ -37,6 +35,10 @@ public class BPlusTree {
     // exist
     public Integer get(Integer key) {
         return root.get(key);
+    }
+    
+    public Integer getBound(Integer key) {
+        return root.getBound(key);
     }
 
     public void getRange(Filter f, HashSet<Integer> result) {
@@ -205,6 +207,9 @@ abstract class Node {
     abstract PostingList getIDs(Integer key);
 
     abstract SecLNode getLastRow(Integer key);
+    
+    abstract Integer getBound(Integer key);
+    
     // You might want to implement a helper function that cleans up a node. Note
     // that the keys, values, and children of a node should be null if it is
     // invalid. Java's memory manager won't garbage collect if there are
@@ -265,6 +270,16 @@ class LNode extends Node {
     public Integer get(Integer key) {
         Integer index = search(key);
         if (index < numChildren && key.equals(keys[index])) {
+            return values[index];
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public Integer getBound(Integer key) {
+        Integer index = search(key);
+        if (index < numChildren) {
             return values[index];
         } else {
             return null;
@@ -496,6 +511,16 @@ class INode extends Node {
             return children[index + 1].get(key);
         }
     }
+    
+    @Override
+    public Integer getBound(Integer key) {
+        Integer index = search(key);
+        if (index == numChildren - 1 || key < keys[index]) {
+            return children[index].getBound(key);
+        } else {
+            return children[index + 1].getBound(key);
+        }
+    }
 }
 
 class PostingList extends HashSet<Integer>{
@@ -534,6 +559,16 @@ class SecLNode extends Node {
 //        return null;
         Integer index = search(key);
         if (index < numChildren && key.equals(keys[index])) {
+            return index;
+        } else {
+            return null;
+        }
+    }
+    
+    @Override
+    public Integer getBound(Integer key) {
+        Integer index = search(key);
+        if (index < numChildren) {
             return index;
         } else {
             return null;
