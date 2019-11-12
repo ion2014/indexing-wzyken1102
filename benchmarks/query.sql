@@ -12,7 +12,7 @@ select (
     where t2.performance <= t1.performance
 ) as position, * 
 from workload as t1
-where banner='B0123456789'
+where banner='B01537308'
 order by position asc
 limit 10;
 
