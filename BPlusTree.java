@@ -46,6 +46,8 @@ public class BPlusTree {
 
         if (f.low != null && f.high != null) {
             SecLNode lowerNode = root.getLastRow(f.low);
+            if (lowerNode == null) return;
+
             Integer index = lowerNode.search(f.low);
             while (lowerNode != null) {
                 while (index < lowerNode.numChildren && lowerNode.keys[index] <= f.high) {
@@ -64,6 +66,8 @@ public class BPlusTree {
             }
         } else if (f.low != null) {
             SecLNode lowerNode = root.getLastRow(f.low);
+            if (lowerNode == null) return;
+            
             Integer index = lowerNode.search(f.low);
             while (lowerNode != null) {
                 while (index < lowerNode.numChildren) {
